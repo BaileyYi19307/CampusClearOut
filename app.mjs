@@ -4,8 +4,9 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Listing } from "./db.mjs";
+import { Listing,User} from "./db.mjs";
 import cors from "cors";
+import bcrypt from 'bcryptjs';
 
 mongoose.connect(process.env.DSN);
 const app = express();
@@ -44,21 +45,68 @@ app.get("/listings/:postId", async (req, res) => {
   res.json(listing);
 });
 
-//handle basic registration
-app.get("/register", async (req, res) => {
-  console.log("user is attempting to register");
-});
-
-//handle login
-app.get("/login", async (req, res) => {
-  console.log("user is attempting to log in");
-});
 
 //delete specific listing by id
 app.delete("/listings/:id", async (req, res) => {
   const listingId = req.params.id;
   await Listing.findByIdAndDelete(listingId);
   res.status(200).json({ message: "Listing deleted successfully" });
+});
+
+
+
+// //post a listing
+// app.post("/listings", async (req, res) => {
+//   console.log("received data:", req.body);
+//   try {
+//     const listing = new Listing(req.body);
+//     const savedListing = await listing.save();
+//     console.log("saved listing:", savedListing);
+//     res.status(201).json(savedListing);
+//   } catch (error) {
+//     console.error("error saving listing:", error);
+//     res.status(500).json({ error: "failed to create listing" });
+//   }
+// });
+
+
+//handle basic registration
+app.post("/register", async (req, res) => {
+  console.log("user is attempting to register");
+  console.log("received data:",req.body); //currently only has the username
+  const {username,emailAddress,password}=req.body;
+
+  if (!username || !emailAddress || !password) {
+    return res.status(400).json({ message: 'all fields are required' });
+  }
+  //hash the password
+  //store their credentials into the database  
+  try{
+    const hashedPassword=await bcrypt.hash(password,10);
+    const user=new User({
+      username:username,
+      email:emailAddress,
+      passwordHash:hashedPassword,
+      createdAt:Date.now()
+    });
+    const savedUser = await user.save();
+    console.log("saved User:", savedUser);
+    res.status(201).json(savedUser);
+  }
+  catch(error){
+    console.error("error saving user:", error);
+    res.status(500).json({ error: "failed to save user" });
+  }
+});
+
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.find(); 
+    res.json(users); // send the users data back
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('server error');
+  }
 });
 
 const PORT = process.env.PORT || 3000;
