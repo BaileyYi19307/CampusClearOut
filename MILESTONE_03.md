@@ -29,7 +29,6 @@ Registering a New User: To create a new account, navigate to the [Registration p
 
 URL(s) to github repository with commits that show progress on research
 --- 
-(TODO: add link to github url that shows line or lines of code that demonstrate continued progress on research topics)
 Link to Registration Page Development:
 [View the code for the Registration Page](https://github.com/nyu-csci-ua-0467-001-002-fall-2024/final-project-BaileyYi19307/blob/master/CampusClearOut/src/pages/Register.jsx#L1-L63)
 - Continued working on React for frontend development, focusing on the registration page. Used useState and useEffect hooks to manage form data and submission flow.
@@ -37,4 +36,3 @@ Link to Registration Page Development:
 
 References 
 ---
-(TODO: if applicable, links to annotated lines of code in github repository that were based off of tutorials / articles / sample projects)
