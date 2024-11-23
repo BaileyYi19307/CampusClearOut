@@ -4,7 +4,7 @@ Milestone 03
 Repository Link
 ---
 https://github.com/nyu-csci-ua-0467-001-002-fall-2024/final-project-BaileyYi19307
-)
+
 URL for deployed site 
 ---
 http://linserv1.cims.nyu.edu:24452
@@ -21,11 +21,11 @@ Special Instructions for Form 1
 
 URL for form 2 (for current milestone)
 ---
-(TODO: if applicable, add link to page that shows results of submitting form)
+http://linserv1.cims.nyu.edu:24452/#/register
 
 Special Instructions for Form 2
 ---
-(TODO: if your app requires special instructions to use or if your app requires authentication, add information here; otherwise, leave blank)
+Registering a New User: To create a new account, navigate to the [Registration page](http://linserv1.cims.nyu.edu:24452/#/register). Fill in the required fields for Username, Email Address, and Password. Once submitted, the registration will be successful, and you will immediately see a list of all registered users, including the newly registered user.
 
 URL(s) to github repository with commits that show progress on research
 --- 
