@@ -26,6 +26,9 @@ export function NavBar() {
           <Nav.Link as={Link} to="/dashboard">
             Dashboard
           </Nav.Link>
+          <Nav>
+          <Nav.Link as={Link} to="/register">Register</Nav.Link>
+        </Nav>
         </Nav>
       </Container>
     </Navbar>
