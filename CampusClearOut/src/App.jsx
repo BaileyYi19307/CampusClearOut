@@ -4,6 +4,7 @@ import { Listings } from "./pages/Listings";
 import { MyListings } from "./pages/MyListings";
 import { MyRequests } from "./pages/MyRequests";
 import { CreateListing } from "./components/CreateListing";
+import { Register } from "./pages/Register";
 import MainLayout from "./MainLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -24,7 +25,9 @@ function App() {
           
           {/* dynamic route for viewing a specific listing's details by its postId, accessible at "/listings/:postId" */}
           <Route path="/listings/:postId" element={<ListingDetails />} />
-          
+
+          <Route path="/register" element={<Register />} />
+
           {/* route for the Dashboard page, accessible at "/dashboard" */}
           <Route path="/dashboard" element={<Dashboard />} />
           
