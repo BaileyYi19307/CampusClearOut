@@ -3,19 +3,21 @@ Milestone 03
 
 Repository Link
 ---
-(TODO: add the link to your repository in github, such as, https://github.com/[COURSE]/[REPO_NAME])
-
+https://github.com/nyu-csci-ua-0467-001-002-fall-2024/final-project-BaileyYi19307
+)
 URL for deployed site 
 ---
-(TODO: add url for your dpeloyed site; should be in this format http://linserv1.cims.nyu.edu:YOUR_PORT_NUMBER)
+http://linserv1.cims.nyu.edu:24452
 
 URL for form 1 (from previous milestone) 
 ---
-(TODO: add link to a functioning form)
+http://linserv1.cims.nyu.edu:24452/#/dashboard/mylistings/create
 
 Special Instructions for Form 1
 ---
-(TODO: if your app requires special instructions to use or if your app requires authentication, add information here; otherwise, leave blank)
+- **Create a Listing**: Navigate to the form at [Create New Listing](http://linserv1.cims.nyu.edu:24452/#/dashboard/mylistings/create) to submit a new listing. After submission, the listing will appear on both the [My Listings page](http://linserv1.cims.nyu.edu:24452/#/dashboard/mylistings) and the [Main Listings page](http://linserv1.cims.nyu.edu:24452/#/).
+
+- **Deleting Listings**: Listings can be deleted directly from the [My Listings page](http://linserv1.cims.nyu.edu:24452/#/dashboard/mylistings).
 
 URL for form 2 (for current milestone)
 ---
