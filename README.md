@@ -174,8 +174,7 @@ An Example Request:
   - I have also never worked with it before, so I’m assigning it 2 points for learning and integration
 
 - **(2 points) Integrate user authentication**
-  - I will be using Passport.js for handling user authentication
-  - Passport.js is an authentication middleware for Node.js that supports user login and sessions securely
+  - I will be using express-sessions for handling user authentication
 
 - **(2 points) Integrate real-time notifications and updates**
   - I plan to use Socket.IO to integrate real-time notifications and updates for buyers when sellers respond to requests or update meetings and vice versa
