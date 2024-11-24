@@ -36,8 +36,8 @@ Link to Registration Page Development:
 
 I spent a lot of time researching authentication and CORS issues when connecting the frontend and backend. I managed to get everything working locally by setting up a proxy server with Vite and using React Context for global state management, which handled the login and registration process. However, I ran into issues when trying to deploy it—CORS problems stopped the authentication flow from working as expected in production. I’m planning to either ask for more help to figure it out or look into switching to Next.js, which might handle these issues better in a deployed environment.
 
-# Attempt at User Authentication Setup (Local Development Only)
-## What was done:
+Attempt at User Authentication Setup (Local Development Only)
+What was done:
 - Implemented user authentication using React for local development.
 - Used a proxy server with Vite to redirect fetch calls to the backend running on `localhost:3000`.
 - Set up global state for user registration, login, and logout using `AuthContext` to store and manage the user's login status.
@@ -46,7 +46,6 @@ I spent a lot of time researching authentication and CORS issues when connecting
 - When the app starts, it checks if the user is logged in by calling the `/api/current-user` endpoint.
 
 
-```markdown
 ## Steps to Test the App:
 
 1. **Clone the Repository**:  
@@ -85,7 +84,7 @@ I spent a lot of time researching authentication and CORS issues when connecting
 
 9. **Logout**:  
    Clicking on the username in the top right corner will display a logout option. Clicking the **Logout** button will log you out and redirect you back to the login page.
-```
+
 
 References 
 ---
