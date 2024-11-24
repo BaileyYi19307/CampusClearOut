@@ -34,9 +34,10 @@ Link to Registration Page Development:
 - Continued working on React for frontend development, focusing on the registration page. Used useState and useEffect hooks to manage form data and submission flow
 - Continued integrating Bootstrap for styling the registration form
 
+Please Note!!
 I spent a lot of time researching authentication and CORS issues when connecting the frontend and backend. I managed to get everything working locally by setting up a proxy server with Vite and using React Context for global state management, which handled the login and registration process. However, I ran into issues when trying to deploy it—CORS problems stopped the authentication flow from working as expected in production. I’m planning to either ask for more help to figure it out or look into switching to Next.js, which might handle these issues better in a deployed environment.
 
-###Attempt at User Authentication Setup (Local Development Only)
+Attempt at User Authentication Setup (Local Development Only)
 What was done:
 - Implemented user authentication using React for local development
 - Used a proxy server with Vite to redirect fetch calls to the backend running on `localhost:3000`
@@ -89,7 +90,7 @@ What was done:
 References 
 ---
 
-## NOTE
+##NOTE
 
 The following references are for the version of the project that was originally working on **localhost**. I moved it to a separate repository called **final-project-duplicate** to store it away for future reference. However, most of my research and progress are shown in the **final-project-duplicate** repository, which contains the working code for authentication, registration, and the related configurations locally. 
 
