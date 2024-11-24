@@ -34,5 +34,58 @@ Link to Registration Page Development:
 - Continued working on React for frontend development, focusing on the registration page. Used useState and useEffect hooks to manage form data and submission flow.
 - Continued integrating Bootstrap for styling the registration form
 
+I spent a lot of time researching authentication and CORS issues when connecting the frontend and backend. I managed to get everything working locally by setting up a proxy server with Vite and using React Context for global state management, which handled the login and registration process. However, I ran into issues when trying to deploy it—CORS problems stopped the authentication flow from working as expected in production. I’m planning to either ask for more help to figure it out or look into switching to Next.js, which might handle these issues better in a deployed environment.
+
+# Attempt at User Authentication Setup (Local Development Only)
+## What was done:
+- Implemented user authentication using React for local development.
+- Used a proxy server with Vite to redirect fetch calls to the backend running on `localhost:3000`.
+- Set up global state for user registration, login, and logout using `AuthContext` to store and manage the user's login status.
+- Created an `AuthProvider` component to provide authentication state to the whole app.
+- Used `express-session` to handle session management (instead of Passport.js).
+- When the app starts, it checks if the user is logged in by calling the `/api/current-user` endpoint.
+
+
+```markdown
+## Steps to Test the App:
+
+1. **Clone the Repository**:  
+   Clone the repository to your local machine using the following command:  
+   [GitHub Repository](https://github.com/BaileyYi19307/final-project-duplicate).
+
+2. **Install Dependencies**:  
+   Navigate to the project folder and install the necessary dependencies by running:  
+   ```bash
+   npm install
+   ```
+
+3. **Set Up the .env File**:  
+   The `.env` file is tracked in the repository and should contain the correct configuration for connecting to the MongoDB database. The database is named `final-project-duplicate`.
+
+4. **Run the Backend**:  
+   Open a terminal window, navigate to the project directory, and start the backend by running:  
+   ```bash
+   node app.mjs
+   ```
+
+5. **Run the Frontend**:  
+   In another terminal window, navigate to the `CampusClearOut` directory, then start the frontend by running:  
+   ```bash
+   npm run dev
+   ```
+
+6. **Test User Registration**:  
+   On the frontend, click the **Register** button to create a new account.
+
+7. **Login**:  
+   After registering, you will be redirected to the login page. Enter the correct credentials for the newly registered account.
+
+8. **Homepage**:  
+   Once logged in successfully, you will be redirected to the homepage. The username should appear in the top right corner of the page.
+
+9. **Logout**:  
+   Clicking on the username in the top right corner will display a logout option. Clicking the **Logout** button will log you out and redirect you back to the login page.
+```
+
 References 
 ---
