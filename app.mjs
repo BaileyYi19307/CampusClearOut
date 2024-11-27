@@ -47,39 +47,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET_KEY,
-    resave: false,
-    httpOnly: false, 
-    saveUninitialized: true,
-    sameSite: 'none',
-    cookie: { 
-      secure: process.env.NODE_ENV === 'production', //setting to secure only in production
-      maxAge: 86400000 },
-  })
-);
-
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-	  credentials: true,
-  })
-);
-
-//adding protected routes here
-const authRequiredPaths = ["/api/current-user"];
-
-//check if the user is authenticated before accessing protected routes
-app.use((req, res, next) => {
-  if (authRequiredPaths.includes(req.path)) {
-    if (!req.session.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-  }
-  next();
-});
 
 //post a listing
 app.post("/api/listings", async (req, res) => {
