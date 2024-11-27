@@ -7,7 +7,6 @@ import { Listing,User} from "./db.mjs";
 import cors from "cors";
 import bcrypt from 'bcryptjs';
 import session from "express-session";
-import session from "express-session";
 
 mongoose.connect(process.env.DSN);
 const app = express();
