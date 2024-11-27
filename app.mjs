@@ -7,12 +7,46 @@ import { Listing,User} from "./db.mjs";
 import cors from "cors";
 import bcrypt from 'bcryptjs';
 import session from "express-session";
+import session from "express-session";
 
 mongoose.connect(process.env.DSN);
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: false,
+    httpOnly: false, 
+    saveUninitialized: true,
+    sameSite: 'none',
+    cookie: { 
+      secure: process.env.NODE_ENV === 'production', //setting to secure only in production
+      maxAge: 86400000 },
+  })
+);
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+	  credentials: true,
+  })
+);
+
+//adding protected routes here
+const authRequiredPaths = ["/api/current-user"];
+
+//check if the user is authenticated before accessing protected routes
+app.use((req, res, next) => {
+  if (authRequiredPaths.includes(req.path)) {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  }
+  next();
+});
 app.use(express.json());
 app.use(
   session({
