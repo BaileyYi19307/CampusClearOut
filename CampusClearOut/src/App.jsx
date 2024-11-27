@@ -72,6 +72,9 @@ function App() {
 
           <Route path="/register" element={<Register />} />
 
+          {/* route for the login page, passing settriggerrefetch for re-fetching user state after login */}
+          <Route path="/login" element={<Login setUser={setUser}/>} />
+
           {/* route for the Dashboard page, accessible at "/dashboard" */}
           <Route path="/dashboard" element={<Dashboard />} />
           
