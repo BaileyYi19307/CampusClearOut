@@ -17,7 +17,7 @@ export function CreateListing() {
     const listingData = { title, description, price };
     //post the data to backend
     try {
-      const response = await fetch(`${API}/listings`, {
+      const response = await fetch(`${API}/api/listings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

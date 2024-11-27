@@ -12,7 +12,7 @@ export function MyListings() {
 
   // retrieve all my listings
   useEffect(() => {
-    fetch(`${API}/listings`)
+    fetch(`${API}/api/listings`)
       .then(response => response.json())
       .then(listingData => {
         setMyListings(listingData);
@@ -24,7 +24,7 @@ export function MyListings() {
   // handle deleting a listing
   const handleDelete = async (listingId) => {
     try {
-      const response = await fetch(`${API}/listings/${listingId}`, {
+      const response = await fetch(`${API}/api/listings/${listingId}`, {
         method: 'DELETE',
       });
       if (response.ok) {

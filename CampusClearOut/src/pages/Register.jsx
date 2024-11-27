@@ -9,36 +9,36 @@ export function Register() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
-  const [users, setUsers] = useState([]); 
-
+  const [users, setUsers] = useState([]);
+   
 // fetch users when the component mounts
-useEffect(() => {
-  fetchUsers();
-}, []);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-// function to fetch users
-const fetchUsers = async () => {
-  try {
-    const response = await fetch(`${API}/users`);
-    const userData = await response.json();
-    setUsers(userData); // set the fetched users
-    console.log("Fetched users:", userData);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-  }
-};
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(`${API}/api/users`);
+      const userData = await response.json();
+      setUsers(userData); // set the fetched users
+      console.log("Fetched users:", userData);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     const registrationData = { username, emailAddress, password };
 
     try {
-      const response = await fetch(`${API}/register`, {
+      const response = await fetch(`${API}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(registrationData),
+        credentials:"include",
       });
 
       if (response.ok) {
@@ -52,7 +52,7 @@ const fetchUsers = async () => {
 
         //fetch users
         fetchUsers();
-
+        navigate("/login");
  
       } else {
         console.log("Failed to submit registration data");

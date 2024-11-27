@@ -10,7 +10,7 @@ export function ListingDetails() {
 
   useEffect(() => {
     //fetch specific post data from backend
-    fetch(`${API}/listings/${postId}`)
+    fetch(`${API}/api/listings/${postId}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("This is data", data);
