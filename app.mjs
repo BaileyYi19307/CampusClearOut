@@ -35,7 +35,7 @@ app.use(
 );
 
 //adding protected routes here
-const authRequiredPaths = ["/api/current-user","/api/create-listing"];
+const authRequiredPaths = ["/api/current-user","/api/create-listing",'/api/my-listings'];
 
 //middleware to check if the user is authenticated before accessing protected routes
 app.use((req, res, next) => {
@@ -86,6 +86,20 @@ app.get("/api/listings/:postId", async (req, res) => {
   const postId = req.params.postId;
   const listing = await Listing.findById(postId);
   res.json(listing);
+});
+
+//retrive all listings created by currently logged in user
+app.get('/api/my-listings',async(req,res)=>{
+  const userId= req.session.user.id;
+  try{
+    //only retrive listings created by logged in user
+    const listings = await Listing.find({seller:userId});
+    res.status(200).json(listings || []);
+  }
+  catch(error){
+    console.error('Error fetching user listings:',err);
+    res.status(500).json({message:'Internal server error'});
+  }
 });
 
 

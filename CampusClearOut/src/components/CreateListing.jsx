@@ -17,12 +17,13 @@ export function CreateListing() {
     const listingData = { title, description, price };
     //post the data to backend
     try {
-      const response = await fetch(`${API}/api/listings`, {
+      const response = await fetch(`${API}/api/create-listing`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(listingData),
+        credentials: "include", 
       });
 
       if (response.ok) {
