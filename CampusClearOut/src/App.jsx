@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { Dashboard } from "./pages/Dashboard";
 import { Listings } from "./pages/Listings";
@@ -5,17 +6,60 @@ import { MyListings } from "./pages/MyListings";
 import { MyRequests } from "./pages/MyRequests";
 import { CreateListing } from "./components/CreateListing";
 import { Register } from "./pages/Register";
+import { ListingDetails } from "./pages/ListingDetails";
+import { Login } from "./pages/Login";
 import MainLayout from "./MainLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import { ListingDetails } from "./pages/ListingDetails";
+const API = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
+  const [user,setUser]=useState(null);
+
+  //fetch and print current user session 
+  useEffect(() => {
+    console.log("useEffect running in App"); 
+    const fetchCurrentUser = async () => {
+      console.log("fetchCurrentUser called");
+      try {
+        const response = await fetch(`${API}/api/current-user`, {
+          credentials: "include", 
+        });
+
+      console.log("Raw response:", response);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          console.log("Fetched current user:", data.user); 
+          setUser(data.user);
+        } else {
+          
+        console.log("Raw response:", response);
+          console.log("User not logged in or session expired.");
+        }
+      } catch (err) {
+        console.error("Error fetching current user:", err); 
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   return (
     // Router is the root component that enables client-side routing in the app
     <Router> 
-      
+        {/* Welcome message */}
+        {user ? (
+          <p style={{ textAlign: "center", margin: "10px 0" }}>
+            Welcome back, {user.username}!
+          </p>
+        ) : (
+          <p style={{ textAlign: "center", margin: "10px 0" }}>
+            You are not logged in.
+          </p>
+        )}
       {/* mainLayout is a layout wrapper that contains the NavBar and other shared UI elements*/}
       <MainLayout> 
         <Routes>
