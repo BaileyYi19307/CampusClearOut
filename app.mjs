@@ -35,9 +35,9 @@ app.use(
 );
 
 //adding protected routes here
-const authRequiredPaths = ["/api/current-user"];
+const authRequiredPaths = ["/api/current-user","/api/create-listing"];
 
-//check if the user is authenticated before accessing protected routes
+//middleware to check if the user is authenticated before accessing protected routes
 app.use((req, res, next) => {
   if (authRequiredPaths.includes(req.path)) {
     if (!req.session.user) {
@@ -48,12 +48,25 @@ app.use((req, res, next) => {
 });
 
 //post a listing
-app.post("/api/listings", async (req, res) => {
+app.post("/api/create-listing", async (req, res) => {
   console.log("received data:", req.body);
+
+  //get userId
+  const userId=req.session.user.id;
+  console.log("the user attempting to create a post is",userId);
+  
+  //destructure data received
+  const {title,description,price}=req.body;
+
   try {
-    const listing = new Listing(req.body);
+    const listing = new Listing({
+      title,
+      description,
+      price,
+      seller:userId,
+    });
     const savedListing = await listing.save();
-    console.log("saved listing:", savedListing);
+    console.log("listing created and saved:", savedListing);
     res.status(201).json(savedListing);
   } catch (error) {
     console.error("error saving listing:", error);
@@ -165,6 +178,7 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ message: "Password does not match" });
     }
     
+    //store user id in the session
     req.session.user = { id: user._id, username: user.username };
     console.log("The req.session.user is", req.session.user);
     res

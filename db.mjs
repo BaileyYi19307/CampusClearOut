@@ -32,7 +32,7 @@ const listingSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   // images: [{ type: String }], // array of image urls or paths
   // status: { type: String, enum: ['Available', 'Reserved', 'Sold'], default: 'Available' },
-  // seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // reference to the user (seller)
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // reference to the user (seller)
   // requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Request' }], // references to requests for this listing
   // postedAt: { type: Date, default: Date.now }
 });
