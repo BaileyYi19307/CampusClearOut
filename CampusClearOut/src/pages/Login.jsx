@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useAuth } from "./Auth";
 
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
-export function Login({setUser}) {
-  //access login function from AuthContent
+export function Login() {
+    const {user, setUser}=useAuth();
+    //access login function from AuthContent
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);

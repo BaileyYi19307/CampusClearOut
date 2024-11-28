@@ -10,42 +10,14 @@ import { ListingDetails } from "./pages/ListingDetails";
 import { Login } from "./pages/Login";
 import MainLayout from "./MainLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {useAuth } from "./pages/Auth";
 import "./App.css";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
-  const [user,setUser]=useState(null);
-
-  //fetch and print current user session 
-  useEffect(() => {
-    console.log("useEffect running in App"); 
-    const fetchCurrentUser = async () => {
-      console.log("fetchCurrentUser called");
-      try {
-        const response = await fetch(`${API}/api/current-user`, {
-          credentials: "include", 
-        });
-
-      console.log("Raw response:", response);
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          console.log("Fetched current user:", data.user); 
-          setUser(data.user);
-        } else {
-          
-        console.log("Raw response:", response);
-          console.log("User not logged in or session expired.");
-        }
-      } catch (err) {
-        console.error("Error fetching current user:", err); 
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
+  const {user, setUser}=useAuth();
+  
 
   return (
     // Router is the root component that enables client-side routing in the app
@@ -73,7 +45,7 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* route for the login page, passing settriggerrefetch for re-fetching user state after login */}
-          <Route path="/login" element={<Login setUser={setUser}/>} />
+          <Route path="/login" element={<Login />} />
 
           {/* route for the Dashboard page, accessible at "/dashboard" */}
           <Route path="/dashboard" element={<Dashboard />} />

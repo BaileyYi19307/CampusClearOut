@@ -1,9 +1,11 @@
 import React from "react";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../pages/Auth";
 const API = import.meta.env.VITE_BACKEND_URL;
 
-export function NavBar({user, setUser}) {
+export function NavBar() {
+  const {user, setUser}=useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {

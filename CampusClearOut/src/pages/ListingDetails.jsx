@@ -1,6 +1,8 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import {Button} from 'react-bootstrap';
+
 const API = import.meta.env.VITE_BACKEND_URL;
 
 export function ListingDetails() {
@@ -27,6 +29,7 @@ export function ListingDetails() {
       <h2>Title:{listing.title}</h2>
       <p>Description:{listing.description}</p>
       <p>Price: {listing.price}</p>
+      <button></button>
     </div>
   );
 }
