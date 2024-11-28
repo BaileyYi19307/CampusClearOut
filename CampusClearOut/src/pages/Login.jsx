@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -68,6 +70,9 @@ export function Login({setUser}) {
         </Form.Group>
         <Button type="submit">Submit</Button>
       </Form>
+        <nav>
+          Don't have an account? Register <Link to="/register">here</Link>
+        </nav>
     </div>
   );
 }

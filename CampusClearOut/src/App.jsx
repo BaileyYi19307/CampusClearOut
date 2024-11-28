@@ -61,7 +61,7 @@ function App() {
           </p>
         )}
       {/* mainLayout is a layout wrapper that contains the NavBar and other shared UI elements*/}
-      <MainLayout> 
+      <MainLayout user={user} setUser={setUser}> 
         <Routes>
           
           {/* route for the main Listings page, available at the root path "/" */}

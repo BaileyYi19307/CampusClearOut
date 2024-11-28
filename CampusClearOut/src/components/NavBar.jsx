@@ -1,8 +1,28 @@
 import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+const API = import.meta.env.VITE_BACKEND_URL;
 
-export function NavBar() {
+export function NavBar({user, setUser}) {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${API}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        //clear user data on logout
+        setUser();
+        navigate("/login");
+      } else {
+        console.error("Failed to log out");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
   return (
     
     // bootstrap Navbar component with expand="lg" to make it responsive at large screens and bg="light" for a light background
@@ -26,9 +46,19 @@ export function NavBar() {
           <Nav.Link as={Link} to="/dashboard">
             Dashboard
           </Nav.Link>
+
+          {user? (
+            <NavDropdown
+              title={`Welcome, ${user.username}`}
+              id="navbarScrollingDropdown"
+            >
+              <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+            </NavDropdown>
+          ):
           <Nav>
-          <Nav.Link as={Link} to="/register">Register</Nav.Link>
+          <Nav.Link as={Link} to="/login">Login</Nav.Link>
         </Nav>
+          }
         </Nav>
       </Container>
     </Navbar>
