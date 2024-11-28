@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Listing,User} from "./db.mjs";
+import { Listing,User,Request} from "./db.mjs";
 import cors from "cors";
 import bcrypt from 'bcryptjs';
 import session from "express-session";
@@ -226,6 +226,22 @@ app.get('/api/current-user',(req,res)=>{
     return res.status(401).json({message:"No user is logged in"});
   }
 })
+
+//endpoint for submitting a request for an item
+app.post('/api/make-request',async(req,res)=>{
+  console.log(req.body);
+  //store in database
+  try {
+    const request = new Request(req.body);
+    const savedRequest = await request.save();
+    console.log("Succeessfuly saved request");
+    res.status(201).json(savedRequest);
+  } catch (error) {
+    console.error("error saving request:", error);
+    res.status(500).json({ error: "failed to create request" });
+  }
+});
+
 
 
 const HOST = process.env.HOST || '127.0.0.1';

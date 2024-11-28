@@ -8,6 +8,7 @@ import { CreateListing } from "./components/CreateListing";
 import { Register } from "./pages/Register";
 import { ListingDetails } from "./pages/ListingDetails";
 import { Login } from "./pages/Login";
+import { MakeRequest } from "./components/MakeRequest";
 import MainLayout from "./MainLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {useAuth } from "./pages/Auth";
@@ -39,8 +40,10 @@ function App() {
           {/* route for the main Listings page, available at the root path "/" */}
           <Route path="/" element={<Listings />} />
           
-          {/* dynamic route for viewing a specific listing's details by its postId, accessible at "/listings/:postId" */}
-          <Route path="/listings/:postId" element={<ListingDetails />} />
+          {/* nested route for accessing a specific listing */}
+          <Route path="/listings/:postId" element={<ListingDetails />}>
+            <Route path="make-request" element={<MakeRequest />} />
+          </Route>
 
           <Route path="/register" element={<Register />} />
 
