@@ -242,6 +242,17 @@ app.post('/api/make-request',async(req,res)=>{
   }
 });
 
+// endpoint to fetch all requests made by the logged-in user
+app.get('/api/my-requests', async (req, res) => {
+  //get user ID from the session
+  const userId = req.session.user.id;
+
+  // find all requests where logged in user is buyer
+    const userRequests = await Request.find({ buyer: userId })
+    res.status(200).json(userRequests);
+  
+});
+
 
 
 const HOST = process.env.HOST || '127.0.0.1';
