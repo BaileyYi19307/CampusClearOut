@@ -253,7 +253,52 @@ app.get('/api/my-requests', async (req, res) => {
   
 });
 
+//endpoint for getting requests others have submitted to seller
+app.get('/api/incoming-requests', async(req,res)=>{
+  //get the user id
+  const userId = req.session.user.id;
+  const incomingRequests = await Request.find({ seller: userId })
+  .populate('listing', 'title')
+  .populate('buyer', 'username'); 
 
+  //find all the requests where the seller is the user id 
+  res.status(200).json(incomingRequests);
+});
+
+//endpoint for approving requests and updating status
+app.post('/api/approve-request/:requestId',async(req,res)=>{
+  //receive the request id in requestId; 
+  const requestId=req.params.requestId;
+  console.log("This is the request id",requestId);
+  try{
+    //find request in database
+    const request = await Request.find({'_id':requestId});
+    //change it's status
+    request[0].status='Approved';
+    await request[0].save();
+    return res.status(200).json(request);
+  }
+  catch(error){
+    console.log("Error approving request",error);
+    return res.status(500).json({error:'Error approving request'});
+  }
+});
+
+// get all approved requests
+app.get('/api/approved-requests', async (req, res) => {
+  const sellerId = req.session.user.id;
+  try {
+    //return approved requests by seller
+    const approvedRequests = await Request.find({ seller: sellerId, status: 'Approved' })
+    .populate('listing', 'title')
+    .populate('buyer', 'username');
+
+    res.status(200).json(approvedRequests);
+  } catch (error) {
+    console.error('Error fetching approved requests:', error);
+    res.status(500).json({ error: 'Error fetching approved requests' });
+  }
+});
 
 const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT || 3000;
