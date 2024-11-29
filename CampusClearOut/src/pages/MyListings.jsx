@@ -121,8 +121,6 @@ export function MyListings() {
         const data = await response.json();
         console.log("here is the data for approving the request",data);
         setApprovedRequests((prev) => [...prev, data]);
-        //approved request is no longer incoming, filter out from display
-        // setApprovedRequests(data);
       }
     }
     catch(error){
@@ -132,6 +130,27 @@ export function MyListings() {
 
   // //deny a request
   // useEffect();
+
+  const denyRequest = async(requestId)=>{
+    try{
+      const response = await fetch(`${API}/api/delete-request/${requestId}`,{
+        method:"POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", 
+      });
+      if (response.ok){
+        console.log("This is the response");
+        // remove the denied request from the state
+        setIncomingRequests((prevRequests) =>
+          prevRequests.filter((request) => request.id !== requestId)
+        );
+      }
+    }
+    catch(error){
+    }
+  }
 
 
 
@@ -143,7 +162,7 @@ export function MyListings() {
         onSelect={(k) => setActiveTab(k)}
         className="mb-3"
       >
-        <Tab eventKey="listings" title={`Listings (${myListings.length})`}>
+        <Tab eventKey="listings" title={`My Active Listings (${myListings.length})`}>
           <Button variant="primary" as={Link} to={"/dashboard/mylistings/create"}>
             Create New Listing
           </Button>
@@ -178,7 +197,7 @@ export function MyListings() {
             )}
           </Row>
         </Tab>
-        <Tab eventKey="requests" title={`Requests (${incomingRequests.length})`}>
+        <Tab eventKey="requests" title={`Pending Requests to Review (${incomingRequests.length})`}>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -203,7 +222,7 @@ export function MyListings() {
                       <Button onClick={()=>approveRequest(request.id)} variant="success" size="sm">
                         Approve
                       </Button>
-                      <Button variant="danger" size="sm" className="ms-2">
+                      <Button onClick={()=> denyRequest(request.id)} variant="danger" size="sm" className="ms-2">
                         Decline
                       </Button>
                     </td>
@@ -220,7 +239,7 @@ export function MyListings() {
           </Table>
         </Tab>
 
-      <Tab eventKey="approved" title={`Approved (${approvedRequests.length})`}>
+      <Tab eventKey="approved" title={`Requests I've Approved (${approvedRequests.length})`}>
         <Table striped bordered hover>
           <thead>
             <tr>

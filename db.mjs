@@ -53,7 +53,7 @@ const requestSchema = new mongoose.Schema({
   location: { type: String, required: true },
   status: {
     type: String,
-    enum: ["Pending", "Approved", "Completed", "No-show"],
+    enum: ["Pending", "Approved", "Completed", "Denied","No-show"],
     default: "Pending",
   },
   buyerRating: {

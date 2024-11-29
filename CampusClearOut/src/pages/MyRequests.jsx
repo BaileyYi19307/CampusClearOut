@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect,useState } from "react";
 import { useAuth } from "./Auth";
-import { Table, Button, Card, Container, Row, Col } from "react-bootstrap";
+import { Table, Button,Tabs,Tab, Container} from "react-bootstrap";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -10,8 +10,12 @@ export function MyRequests() {
   const {user,setUser} = useAuth();
   const [requests, setRequests] = useState([]);
 
+  //count number of requests with status (i.e. approved, etc)
+  const getRequestCount = (status) =>
+    requests.filter((request) => request.status === status).length;
 
-  //also want this to re render if the status of a request changes
+
+  //also want this to rerender if the status of a request changes
   useEffect(()=>{
     //check if any user is logged in; if not, return without running
     if (!user) return; 
@@ -48,74 +52,56 @@ export function MyRequests() {
   return (
     <Container className="mt-5">
       <h2 className="mb-4">My Requests</h2>
-      {requests.length > 0 ? (
-        <>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Item</th>
-                <th>Date</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.map((request, index) => (
-                <tr key={request.id}>
-                  <td>{index + 1}</td>
-                  <td>{request.listing}</td>
-                  <td>{request.scheduledDate}</td>
-                  <td>{request.location}</td>
-                  <td>{request.status}</td>
-                  <td>
-                    <Button
-                      variant="success"
-                      size="sm"
-                      onClick={() =>
-                        handleStatusChange(request.id, "Completed")
-                      }
-                    >
-                      Mark Completed
-                    </Button>
-                  </td>
+      <Tabs defaultActiveKey="pending" id="request-tabs" className="mb-3">
+        {["Pending", "Approved", "Cancelled"].map((status) => (
+          <Tab eventKey={status.toLowerCase()}title={`${status} Requests (${getRequestCount(status)})`}
+          key={status}>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-
-          <Row className="mt-4">
-            {requests.map((request) => (
-              <Col key={request.id} sm={12} md={6} lg={4} className="mb-4">
-                <Card>
-                  <Card.Body>
-                    <Card.Title>{request.itemName}</Card.Title>
-                    <Card.Text>
-                      <strong>Date:</strong> {request.scheduledDate}
-                      <br />
-                      <strong>Location:</strong> {request.location}
-                      <br />
-                      <strong>Status:</strong> {request.status}
-                    </Card.Text>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() =>
-                        handleStatusChange(request.id, "Cancelled")
-                      }
-                    >
-                      Cancel Request
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </>
-      ) : (
-        <p>No requests found</p>
-      )}
+              </thead>
+              <tbody>
+                {requests
+                  .filter((request) => request.status === status)
+                  .map((request, index) => (
+                    <tr key={request.id}>
+                      <td>{index + 1}</td>
+                      <td>{request.listing}</td>
+                      <td>{new Date(request.scheduledDate).toLocaleDateString()}</td>
+                      <td>{request.location}</td>
+                      <td>
+                        {status === "Pending" && (
+                          <>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() =>
+                                handleStatusChange(request.id, "Cancelled")
+                              }
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        )}
+                        {status === "Approved" && (
+                          <Button variant="info" size="sm">
+                            View Details
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </Tab>
+        ))}
+      </Tabs>
     </Container>
   );
 }

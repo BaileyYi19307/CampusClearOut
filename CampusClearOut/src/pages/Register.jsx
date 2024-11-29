@@ -10,6 +10,7 @@ export function Register() {
   const [password, setPassword] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
   const [users, setUsers] = useState([]);
+  const navigate=useNavigate();
    
 // fetch users when the component mounts
   useEffect(() => {

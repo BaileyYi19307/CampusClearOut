@@ -284,6 +284,21 @@ app.post('/api/approve-request/:requestId',async(req,res)=>{
   }
 });
 
+app.post('/api/delete-request/:requestId',async(req,res)=>{
+  //delete the request 
+  const requestId = req.params.requestId;
+  try{
+    //delete request in database
+    await Request.findByIdAndDelete(requestId);
+    res.status(200).json({ message: "Request deleted successfully" });
+  }
+  catch(error){
+    console.log("Error deleting request",error);
+    return res.status(500).json({error:'Error deleting request'});
+  }
+
+});
+
 // get all approved requests
 app.get('/api/approved-requests', async (req, res) => {
   const sellerId = req.session.user.id;
@@ -299,6 +314,8 @@ app.get('/api/approved-requests', async (req, res) => {
     res.status(500).json({ error: 'Error fetching approved requests' });
   }
 });
+
+
 
 const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT || 3000;
