@@ -9,6 +9,8 @@ import { Register } from "./pages/Register";
 import { ListingDetails } from "./pages/ListingDetails";
 import { Login } from "./pages/Login";
 import { MakeRequest } from "./components/MakeRequest";
+import { EmailVerification } from "./pages/EmailVerification";
+import { EmailVerificationResult } from "./pages/EmailVerificationResult";
 import MainLayout from "./MainLayout";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {useAuth } from "./pages/Auth";
@@ -46,6 +48,8 @@ function App() {
           </Route>
 
           <Route path="/register" element={<Register />} />
+          <Route path="/email-verification" element={<EmailVerification />} />
+          <Route path="/email-verification-result" element={<EmailVerificationResult />} />
 
           {/* route for the login page, passing settriggerrefetch for re-fetching user state after login */}
           <Route path="/login" element={<Login />} />

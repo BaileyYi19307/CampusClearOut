@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
+  isVerified:{type:Boolean,default:false},
   listings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Listing" }], // references to listings posted by the user
   requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Request" }], // references to requests made by the user
   ratings: {

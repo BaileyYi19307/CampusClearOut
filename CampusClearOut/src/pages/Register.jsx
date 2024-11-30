@@ -8,30 +8,42 @@ export function Register() {
   const [username, setUsername] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [showSuccessMessage, setShowSuccessMessage] = useState("");
-  const [users, setUsers] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage,setErrorMessage]=useState("");
   const navigate=useNavigate();
-   
-// fetch users when the component mounts
-  useEffect(() => {
-    fetchUsers();
-  }, []);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(`${API}/api/users`);
-      const userData = await response.json();
-      setUsers(userData); // set the fetched users
-      console.log("Fetched users:", userData);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+  //validate the input
+  const validateForm = () => {
+    if (!username || !emailAddress || !password) {
+      setErrorMessage("All fields are required");
+      return false;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailAddress)) {
+      setErrorMessage("Invalid email format");
+      return false;
+    }
+
+    if (password.length < 8) {
+      setErrorMessage("Password must be at least 8 characters long");
+      return false;
+    }
+    //clear previous errors
+    setErrorMessage("");
+    return true;
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    const registrationData = { username, emailAddress, password };
+    //check if the form is valid first
+    if(!validateForm()){
+      return;
+    }
 
+    const registrationData = { username, emailAddress, password };
+    //send registration data to the backend
     try {
       const response = await fetch(`${API}/api/register`, {
         method: "POST",
@@ -43,50 +55,39 @@ export function Register() {
       });
 
       if (response.ok) {
-        console.log("Successfully registered");
-        setShowSuccessMessage("Successfully registered!");
-        
-        // reset form fields
-        setUsername("");
-        setEmailAddress("");
-        setPassword("");
-
-        //fetch users
-        fetchUsers();
-        navigate("/login");
+        navigate("/email-verification", {
+          state: { email: emailAddress },
+        });
  
       } else {
-        console.log("Failed to submit registration data");
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "Registration failed. Please try again.");
+        console.log("Failed to register:", errorData);
       }
     } catch (error) {
       console.error("Error registering:", error);
+      setErrorMessage("An unexpected error occurred. Please try again later.");
     }
   };
 
   return (
-    <div>
-      {showSuccessMessage && (
+    <div className="registration-form">
+      <h2>Register</h2>
+      {successMessage && (
         <Alert variant="success" className="mt-3">
-          You have successfully registered! Here are the other users:
+          {successMessage}
         </Alert>
       )}
 
-      <h3>Currently Registered Users:</h3>
-      {users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user._id}>
-              Username:{user.username} Email: {user.email}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No users found</p>
+      {errorMessage && (
+        <Alert variant="danger" className="mt-3">
+          {errorMessage}
+        </Alert>
       )}
 
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="username">
-          <Form.Label>Name:</Form.Label>
+          <Form.Label>Username:</Form.Label>
           <Form.Control
             type="text"
             value={username}
@@ -99,7 +100,7 @@ export function Register() {
         <Form.Group controlId="emailAddress">
           <Form.Label>Email Address:</Form.Label>
           <Form.Control
-            type="text"
+            type="email"
             value={emailAddress}
             onChange={(e) => setEmailAddress(e.target.value)}
             required
