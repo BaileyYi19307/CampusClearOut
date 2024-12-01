@@ -66,6 +66,13 @@ const requestSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+const notificationSchema = new mongoose.Schema({
+  recipient: {type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
+  message: {type:String,required:true},
+})
+
+
 export const User = mongoose.model("User", userSchema);
 export const Listing = mongoose.model("Listing", listingSchema);
 export const Request = mongoose.model("Request", requestSchema);
+export const Notification= mongoose.model("Notification",notificationSchema);

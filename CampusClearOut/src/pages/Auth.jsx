@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import io from "socket.io-client";
+
 const API = import.meta.env.VITE_BACKEND_URL;
 
 //create global state shared between multiple components
@@ -13,6 +15,8 @@ export const useAuth = () => {
 // component to wrap the app and provide global state
 export const AuthProvider = ({children}) =>{
     const [user,setUser]=useState(null);
+    const [socket, setSocket] = useState(null); 
+
 
   //fetch and print current user session 
   useEffect(() => {
@@ -48,6 +52,25 @@ export const AuthProvider = ({children}) =>{
     fetchCurrentUser();
   }, []);
 
+  // initialize Socket.IO connection when user logs in
+  useEffect(() => {
+    if (user) {
+      // only connect the socket when user is available
+      const newSocket = io("http://127.0.0.1:3000"); 
+      console.log("Socket initialized for user:", user.id);
 
-  return <AuthContext.Provider value={{user,setUser}}>{children}</AuthContext.Provider>
+      // link user with the backend via socket
+      newSocket.emit("connectUser", user.id);
+
+      setSocket(newSocket);
+
+      // cleanup socket on logout or unmount
+      return () => {
+        console.log("Socket disconnected for user:", user.id);
+        newSocket.disconnect();
+      };
+    }
+  }, [user]); 
+
+  return <AuthContext.Provider value={{user,setUser,socket}}>{children}</AuthContext.Provider>
 }

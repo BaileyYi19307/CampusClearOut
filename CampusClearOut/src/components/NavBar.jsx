@@ -49,6 +49,7 @@ export function NavBar() {
             Dashboard
           </Nav.Link>
 
+
           {user? (
             <NavDropdown
               title={`Welcome, ${user.username}`}
@@ -61,6 +62,9 @@ export function NavBar() {
           <Nav.Link as={Link} to="/login">Login</Nav.Link>
         </Nav>
           }
+          <Nav.Link as={Link} to="/notifications">
+            Notifications
+          </Nav.Link>
         </Nav>
       </Container>
     </Navbar>

@@ -30,6 +30,8 @@
     "nodemailer": "^6.9.16",
     "react-bootstrap": "^2.10.5",
     "react-router-dom": "^6.28.0",
-    "serve": "^14.2.4"
+    "serve": "^14.2.4",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   }
 }

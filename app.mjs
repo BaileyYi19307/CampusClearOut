@@ -3,16 +3,53 @@ import express from "express";
 import mongoose from "mongoose";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Listing,User,Request} from "./db.mjs";
+import { Listing,User,Request, Notification} from "./db.mjs";
 import cors from "cors";
 import bcrypt from 'bcryptjs';
 import session from "express-session";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
-
+import {createServer} from 'http';
+import {Server} from 'socket.io';
 
 mongoose.connect(process.env.DSN);
 const app = express();
+const server= createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://127.0.0.1:5173", 
+    methods: ["GET", "POST"], 
+    credentials: true, 
+  },
+});
+
+
+// mapping userId to socketId
+const userSockets = {}; 
+
+//when server object connects:
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  // handle the register event
+  socket.on('connectUser', (userId) => {
+    userSockets[userId] = socket.id; 
+    console.log(`User ${userId} registered with socket ID ${socket.id}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+    
+    // find userId associated with disconnected socket ID and remove mapping
+    const userId = Object.keys(userSockets).find(key => userSockets[key] === socket.id);
+    if (userId) {
+      delete userSockets[userId];
+    }
+  });
+});
+
+
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -52,11 +89,11 @@ app.use((req, res, next) => {
 
 //post a listing
 app.post("/api/create-listing", async (req, res) => {
-  console.log("received data:", req.body);
+  // console.log("received data:", req.body);
 
   //get userId
   const userId=req.session.user.id;
-  console.log("the user attempting to create a post is",userId);
+  // console.log("the user attempting to create a post is",userId);
   
   //destructure data received
   const {title,description,price}=req.body;
@@ -69,7 +106,7 @@ app.post("/api/create-listing", async (req, res) => {
       seller:userId,
     });
     const savedListing = await listing.save();
-    console.log("listing created and saved:", savedListing);
+    // console.log("listing created and saved:", savedListing);
     res.status(201).json(savedListing);
   } catch (error) {
     console.error("error saving listing:", error);
@@ -303,7 +340,7 @@ app.get('/api/users', async (req, res) => {
 //adding route to login 
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("The req body is", req.body);
+  // console.log("The req body is", req.body);
   //check that both email and password are available
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password are required" });
@@ -312,7 +349,7 @@ app.post("/api/login", async (req, res) => {
   //find user
   try {
     const user = await User.findOne({ email });
-    console.log("The user is", user);
+    console.log(user.username,"logged in");
 
     
     //if user doesn't exist
@@ -335,7 +372,7 @@ app.post("/api/login", async (req, res) => {
 
     //store user id in the session
     req.session.user = { id: user._id, username: user.username };
-    console.log("The req.session.user is", req.session.user);
+    console.log("The req.session.user is", req.session.user.username);
     res
       .status(200)
       .json({ message: "Login successful", user: req.session.user });
@@ -406,6 +443,44 @@ app.get('/api/incoming-requests', async(req,res)=>{
   res.status(200).json(incomingRequests);
 });
 
+
+
+// endpoint to fetchall notifications for a specific user
+app.get("/api/notifications", async (req, res) => {
+  const { userId } = req.query; 
+
+  try {
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    console.log("Fetching notifications.....");
+    // fetch notifications for given user ID,  most recent first
+    const notifications = await Notification.find({ recipient: userId }).sort({ createdAt: -1 });
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+});
+
+
+//save notification in backend
+const saveNotification = async (userId, message) => {
+  try {
+    const notification = new Notification({
+      recipient: userId,
+      message: message,
+    });
+    await notification.save();
+    console.log("Notification saved:", notification);
+  } catch (error) {
+    console.error("Error saving notification:", error);
+  }
+}
+
+
+
 //endpoint for approving requests and updating status
 app.post('/api/approve-request/:requestId',async(req,res)=>{
   //receive the request id in requestId; 
@@ -416,7 +491,24 @@ app.post('/api/approve-request/:requestId',async(req,res)=>{
     const request = await Request.find({'_id':requestId});
     //change it's status
     request[0].status='Approved';
-    await request[0].save();
+    const savedRequest=await request[0].save();
+    console.log("The saved request was",savedRequest);
+
+
+    const buyerId = savedRequest.buyer;
+    console.log("The buyer id was",buyerId);
+    const message = `Your request for ${savedRequest.listing} was approved by the seller.`;
+
+    //check if socketId for notification recipient exists (i.e. they're online)
+    if (userSockets[buyerId]) {
+      // send live notification to recipient if so
+      io.to(userSockets[buyerId]).emit("notification", { message });
+    } else {
+      console.log(`User ${buyerId} is offline. Notification saved to the database.`);
+    }
+    //otherwise save notification to database
+    await saveNotification(buyerId,message);
+
     return res.status(200).json(request);
   }
   catch(error){
@@ -460,7 +552,7 @@ app.get('/api/approved-requests', async (req, res) => {
 
 const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, () => {
   console.log(`Server is running at http://${HOST}:${PORT}`);
 });
 
