@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert,InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_BACKEND_URL;
@@ -10,6 +10,7 @@ export function Register() {
   const [password, setPassword] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage,setErrorMessage]=useState("");
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate=useNavigate();
 
   //validate the input
@@ -71,8 +72,8 @@ export function Register() {
   };
 
   return (
-    <div className="registration-form">
-      <h2>Register</h2>
+    <div className="registration-container">
+      <h2 className="my-4 text-center">Register</h2>
       {successMessage && (
         <Alert variant="success" className="mt-3">
           {successMessage}
@@ -94,6 +95,7 @@ export function Register() {
             onChange={(e) => setUsername(e.target.value)}
             required
             placeholder="Enter your name"
+            className="mb-3"
           />
         </Form.Group>
 
@@ -105,21 +107,30 @@ export function Register() {
             onChange={(e) => setEmailAddress(e.target.value)}
             required
             placeholder="Enter your email address"
+            className="mb-3"
           />
         </Form.Group>
 
+       
+        {/* Password input */}
         <Form.Group controlId="password">
           <Form.Label>Password:</Form.Label>
+          <InputGroup classname="mb-3">
           <Form.Control
-            type="password"
+            type={showPassword ? "text" : "password"} //toggle password visibility
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="Enter your password"
           />
+          <InputGroup.Text onClick={() => setShowPassword((prev) => !prev)} style={{ cursor: "pointer" }}>
+            {showPassword ? "Hide" : "Show"}
+          </InputGroup.Text>
+          </InputGroup>
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+
+        <Button variant="primary" type="submit" className="w-100 mt-4">
           Register
         </Button>
       </Form>
