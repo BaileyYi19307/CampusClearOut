@@ -1,0 +1,18 @@
+.notification-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .notification-item.unseen {
+    font-weight: bold;
+    background-color: #f8f9fa; /* Light background for unseen notifications */
+  }
+  
+  .notification-item.seen {
+    background-color: #e9ecef; /* Lighter background for seen notifications */
+  }
+  
+  .notification-item:hover {
+    background-color: #dee2e6; /* Slight darker on hover */
+  }
+  

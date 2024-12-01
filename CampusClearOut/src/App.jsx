@@ -52,7 +52,6 @@ function App() {
           <Route path="/email-verification" element={<EmailVerification />} />
           <Route path="/email-verification-result" element={<EmailVerificationResult />} />
 
-
           <Route path="/notifications" element={<Notifications />} />
 
           {/* route for the login page, passing settriggerrefetch for re-fetching user state after login */}

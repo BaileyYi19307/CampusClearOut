@@ -457,12 +457,15 @@ app.get("/api/notifications", async (req, res) => {
     console.log("Fetching notifications.....");
     // fetch notifications for given user ID,  most recent first
     const notifications = await Notification.find({ recipient: userId }).sort({ createdAt: -1 });
+   
     res.status(200).json(notifications);
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ error: "Failed to fetch notifications" });
   }
 });
+
+
 
 
 //save notification in backend

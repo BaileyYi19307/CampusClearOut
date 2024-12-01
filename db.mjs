@@ -69,6 +69,8 @@ const requestSchema = new mongoose.Schema({
 const notificationSchema = new mongoose.Schema({
   recipient: {type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
   message: {type:String,required:true},
+  seen: { type: Boolean, default: true }, //track whether a notification is new or not
+  createdAt: {type:Date,default:Date.now()},
 })
 
 
