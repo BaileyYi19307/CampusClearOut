@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "./Auth";
@@ -13,7 +13,7 @@ export function Login() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,10 +46,12 @@ export function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="login-container"> 
+      <h2 className="my-4 text-center">Login</h2>
       {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+
       <Form onSubmit={handleSubmit}>
+        {/* Email address input */}
         <Form.Group controlId="emailAddress">
           <Form.Label>Email Address:</Form.Label>
           <Form.Control
@@ -58,21 +60,31 @@ export function Login() {
             onChange={(e) => setEmailAddress(e.target.value)}
             required
             placeholder="Enter your email"
+            className="mb-3"
           />
         </Form.Group>
+
+        {/* Password input */}
         <Form.Group controlId="password">
           <Form.Label>Password:</Form.Label>
+          <InputGroup classname="mb-3">
           <Form.Control
-            type="password"
+            type={showPassword ? "text" : "password"} //toggle password visibility
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="Enter your password"
           />
+          <InputGroup.Text onClick={() => setShowPassword((prev) => !prev)} style={{ cursor: "pointer" }}>
+            {showPassword ? "Hide" : "Show"}
+          </InputGroup.Text>
+          </InputGroup>
         </Form.Group>
-        <Button type="submit">Submit</Button>
+
+
+        <Button variant="primary" type="submit" className="w-100 mt-4">Submit</Button>
       </Form>
-        <nav>
+        <nav className="mt-3">
           Don't have an account? Register <Link to="/register">here</Link>
         </nav>
     </div>
