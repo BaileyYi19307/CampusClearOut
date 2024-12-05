@@ -165,17 +165,17 @@ app.post("/api/listings", async (req, res) => {
   }
 });
 
-
-
-
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, 
   auth: {
-      user: 'darrin.strosin88@ethereal.email',
-      pass: '3DsAJ62Sggr9XgHGj5'
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
 });
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
