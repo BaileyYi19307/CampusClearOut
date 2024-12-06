@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
+import Listing from "../components/Listing";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -32,33 +32,16 @@ export function Listings() {
               lg={3}
               className="d-flex align-items-stretch"
             >
-              <div
-                className="listing-card"
-                style={{
-                  width: "100%",
-                  margin: "1rem",
-                  padding: "1rem",
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                }}
-              >
-                <h3>{listing.title}</h3>
-                <p>{listing.description}</p>
-                <p>
-                  <strong>Price:</strong> ${listing.price}
-                </p>
-
-                <Button
-                  variant="primary"
-                  as={Link}
-                  to={`/listings/${listing._id}`}
-                >
-                  View Details
-                </Button>
-              </div>
+              <Listing
+                seller={listing.seller.username}
+                title={listing.title}
+                description={listing.description}
+                price={listing.price}
+                image={listing.image}
+                link={`/listings/${listing._id}`}
+              />
             </Col>
           ))}
-          ;
         </Row>
       </Container>
     </div>

@@ -26,16 +26,6 @@ function App() {
   return (
     // Router is the root component that enables client-side routing in the app
     <Router> 
-        {/* Welcome message */}
-        {user ? (
-          <p style={{ textAlign: "center", margin: "10px 0" }}>
-            Welcome back, {user.username}!
-          </p>
-        ) : (
-          <p style={{ textAlign: "center", margin: "10px 0" }}>
-            You are not logged in.
-          </p>
-        )}
       {/* mainLayout is a layout wrapper that contains the NavBar and other shared UI elements*/}
       <MainLayout user={user} setUser={setUser}> 
         <Routes>

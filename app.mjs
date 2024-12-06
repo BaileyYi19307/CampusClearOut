@@ -17,7 +17,7 @@ const app = express();
 const server= createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://127.0.0.1:5173", 
+    origin: process.env.FRONTEND_URL, 
     methods: ["GET", "POST"], 
     credentials: true, 
   },
@@ -117,7 +117,7 @@ app.post("/api/create-listing", async (req, res) => {
 //retrieve all listings from database
 app.get("/api/listings", async (req, res) => {
   console.log("Getting all listings...");
-  const listings = await Listing.find();
+  const listings = await Listing.find().populate("seller","username");
   res.status(200).json(listings);
 });
 
