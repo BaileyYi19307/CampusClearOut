@@ -11,6 +11,10 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import {createServer} from 'http';
 import {Server} from 'socket.io';
+import uploadMiddleware from './uploadMiddleware.js';
+
+//save listing files uploaded to "listings" folder in Cloudinary
+const upload=uploadMiddleware("listings");
 
 mongoose.connect(process.env.DSN);
 const app = express();
@@ -88,21 +92,27 @@ app.use((req, res, next) => {
 });
 
 //post a listing
-app.post("/api/create-listing", async (req, res) => {
+//only allow one image to be uploaded
+app.post("/api/create-listing", upload.single('image'),async (req, res) => {
   // console.log("received data:", req.body);
 
   //get userId
   const userId=req.session.user.id;
-  // console.log("the user attempting to create a post is",userId);
   
   //destructure data received
   const {title,description,price}=req.body;
+
+  //get url of uploaded image
+  //req.file.path gets the cloudinary URL of the uploaded image
+  //either url returned by cloudinary or null if no image uploaded
+  const imageUrl=req.file ? req.file.path :null; 
 
   try {
     const listing = new Listing({
       title,
       description,
       price,
+      images:imageUrl?[imageUrl]:[],
       seller:userId,
     });
     const savedListing = await listing.save();

@@ -37,7 +37,7 @@ export function Listings() {
                 title={listing.title}
                 description={listing.description}
                 price={listing.price}
-                image={listing.image}
+                image={listing.images && listing.images.length > 0 ? listing.images[0] : null}
                 link={`/listings/${listing._id}`}
               />
             </Col>

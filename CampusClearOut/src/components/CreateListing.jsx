@@ -8,21 +8,29 @@ export function CreateListing() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [image,setImage]=useState(null);
   const navigate = useNavigate();
 
   //handle submitting a listing
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const listingData = { title, description, price };
+    //create FormData object to handle both text/file inputs
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("price", price);
+    //is there an image, attach to data 
+    if (image){
+      formData.append("image",image);
+    }
+
+
     //post the data to backend
     try {
       const response = await fetch(`${API}/api/create-listing`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(listingData),
+        body: formData,
         credentials: "include", 
       });
 
@@ -32,6 +40,7 @@ export function CreateListing() {
         setTitle("");
         setDescription("");
         setPrice("");
+        setImage(null);
         // navigate back to "My Listings" page
         navigate("/dashboard/mylistings?created=true");
       } else {
@@ -75,6 +84,15 @@ export function CreateListing() {
           onChange={(e) => setPrice(e.target.value)}
           required
           placeholder="Enter the price"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formImage" className="mb-3">
+        <Form.Label>Upload Image:</Form.Label>
+        <Form.Control
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          accept="image/*" 
         />
       </Form.Group>
 

@@ -17,7 +17,7 @@ function Listing({ seller,title, description, price, image, link }) {
         />
       </div>
       <div className="listing-content">
-      <p className="listing-seller">Sold by: {seller}</p>
+      <p className="listing-seller">Posted by: {seller}</p>
         <p className="listing-description">{description}</p>
         <div className="listing-footer">
           <p className="listing-price">${price}</p>
