@@ -21,8 +21,11 @@ export function Listings() {
   return (
     <div>
       <Container>
-        <h2 className="text-center my-4">Available Listings</h2>
-        <Row className="listing-grid">
+      <header className="text-center py-4 mb-4 mt-5 bg-light shadow-sm rounded">
+        <h1 className="text-primary display-4">Welcome to CampusClearOut</h1>
+        <p className="text-muted lead">A marketplace for students to buy, sell, and trade essentials as the semester wraps up</p>
+      </header>        
+      <Row className="listing-grid">
           {listings.map((listing) => (
             <Col
               key={listing._id}
