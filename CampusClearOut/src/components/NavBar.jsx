@@ -1,13 +1,14 @@
 import React from "react";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { NotificationDropdown } from "../pages/Notifications";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import { useAuth } from "../pages/Auth";
 const API = import.meta.env.VITE_BACKEND_URL;
 
 export function NavBar() {
   const {user, setUser}=useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -41,8 +42,10 @@ export function NavBar() {
           {/* nav section for navigation links, className="me-auto" adds margin to the right, pushing links to the left */}
           <Nav className="me-auto">
             {/* Nav.Link to homepage, using React Router's Link to handle routing */}
-            <Nav.Link as={Link} to="/" className="nav-link">Listings</Nav.Link>
-            {user && <Nav.Link as={Link} to="/dashboard" className="nav-link">Dashboard</Nav.Link>}
+            <Nav.Link as={Link} to="/" className={location.pathname === "/" ? "nav-link active" : "nav-link"}>
+              Listings
+            </Nav.Link>
+            {user && <Nav.Link as={Link} to="/dashboard" className={location.pathname === "/dashboard" ? "nav-link active" : "nav-link"}>Dashboard</Nav.Link>}
             </Nav>
 
             {/* notification dropdown component that shows the user's notifications only if they're logged in*/}
@@ -59,7 +62,7 @@ export function NavBar() {
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             ) : (
-              <Nav.Link as={Link} to="/login" className="nav-link">Login</Nav.Link>
+              <Nav.Link as={Link} to="/login" className={location.pathname === "/login" ? "nav-link active" : "nav-link"}>Login</Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>

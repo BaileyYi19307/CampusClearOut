@@ -68,7 +68,7 @@ export function Login() {
         {/* Password input */}
         <Form.Group controlId="password">
           <Form.Label>Password:</Form.Label>
-          <InputGroup classname="mb-3">
+          <InputGroup className="mb-3">
           <Form.Control
             type={showPassword ? "text" : "password"} //toggle password visibility
             value={password}

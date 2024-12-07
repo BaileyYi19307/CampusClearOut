@@ -1,8 +1,9 @@
 import React from "react";
 import { useParams, useNavigate,Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Card, Container, Row, Col} from "react-bootstrap";
 import { useAuth } from "./Auth";
+import { MakeRequest } from "../components/MakeRequest";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,6 +13,8 @@ export function ListingDetails() {
   const { postId } = useParams();
   const [listing, setListing] = useState([]);
   const navigate = useNavigate();
+  const [showRequestForm, setShowRequestForm] = useState(false);
+
 
   //fetch listing details
   useEffect(() => {
@@ -26,29 +29,91 @@ export function ListingDetails() {
       );
   }, [postId]);
 
-  //navigate to make request page if event triggered
   const handleRequestItem = () => {
-    //navigate to make request, passing state too
-    navigate(`/listings/${listing._id}/make-request`, {
-      state: {
-        seller: listing.seller,
-        buyer: user.id,
-        listing: postId,
-      },
-    });
+    setShowRequestForm(true); 
+    if (!user) {
+      navigate('/login');
+    }
+  };
+  const handleCancelRequest = () => {
+    setShowRequestForm(false);
   };
 
   return (
-    <div>
-      <h1>Post ID: {postId}</h1>
-      <h2>Title:{listing.title}</h2>
-      <p>Description:{listing.description}</p>
-      <p>Price: {listing.price}</p>
-      <Button variant="primary" onClick={handleRequestItem}>
-        Request Item
-      </Button>
-      <Outlet />
+    <Container className="mt-4">
+      {showRequestForm ? (
+        // conditionally render makerequest component
+        <MakeRequest
+          seller={listing.seller}
+          sellerName={listing.seller?.username || "Anonymous"}
+          buyer={user.id}
+          listing={postId}
+          listingName={listing.title}
+          onCancel={handleCancelRequest}
+        />
+      ) : (
+        <>
+          <Row>
+            <Col lg={8} className="mx-auto">
+              <Card className="p-3 mb-5 bg-white rounded">
+                <Row className="g-0">
+                  <Col md={6}>
+                    <Card.Img
+                      variant="top"
+                      src={
+                        listing.images && listing.images.length > 0
+                          ? listing.images[0]
+                          : "https://via.placeholder.com/600x400?text=No+Image+Available"
+                      }
+                      alt={listing.title}
+                      className="rounded-start"
+                    />
+                  </Col>
 
-    </div>
+                  <Col md={6}>
+                    <Card.Body>
+                      <h2 className="text-primary mb-3">{listing.title}</h2>
+                      <p className="text-muted">
+                        <strong>Seller:</strong> {listing.seller?.username || "Anonymous"}
+                      </p>
+                      <p className="mb-4">
+                        <strong>Description:</strong> {listing.description}
+                      </p>
+                      <p>
+                        <strong>Price:</strong>{" "}
+                        <span className="text-success">${listing.price}</span>
+                      </p>
+                      <div className="mt-4">
+                        <Button
+                          variant="primary"
+                          className="w-100"
+                          onClick={handleRequestItem}
+                        >
+                          Request Item
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row className="mt-4">
+            <Col lg={8} className="mx-auto">
+              <Card className="p-3">
+                <h5>Additional Information</h5>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
+                  imperdiet, urna eget hendrerit scelerisque, lorem ipsum fermentum
+                  nunc, nec gravida libero ligula eget metus. Curabitur ut neque
+                  vitae nulla cursus vulputate.
+                </p>
+              </Card>
+            </Col>
+          </Row>
+        </>
+      )}
+    </Container>
   );
 }

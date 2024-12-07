@@ -6,19 +6,13 @@ import { Form, Button } from "react-bootstrap";
 const API = import.meta.env.VITE_BACKEND_URL;
 
 
-export function MakeRequest(){
+export function MakeRequest({seller,sellerName,buyer,listing,listingName,onCancel}){
     //get state passed via navigate
-    const {user, setUser}=useAuth();
-    const {state} = useLocation(); 
-    const {seller,buyer,listing} = state;
     const navigate=useNavigate();
-
     const meetingDate = useRef();
     const meetingLocation = useRef();
 
-
     //handle form submission 
-
     const handleSubmit = async(e)=>{
         e.preventDefault();
         const data = {
@@ -40,26 +34,23 @@ export function MakeRequest(){
             });
             if (response.ok) {
                 console.log("Request successfully made!");
-                navigate(`/listings/${listing}`);
+                onCancel();
               } else {
                 console.error("Failed to submit request:", err);
             }
         }
-        catch (err) {
-            console.error("Error submitting request:", err);
+        catch (error) {
+            console.error("Error submitting request:", error);
           }
     };
-
 
 //make a form 
 return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       <h2>Make a Request</h2>
-      <p><strong>Seller:</strong> {seller}</p>
-      <p><strong>Buyer:</strong> {buyer}</p>
-      <p><strong>Listing Item:</strong> {listing}</p>
+      <p><strong>Seller:</strong> {sellerName}</p>
+      <p><strong>Listing Item:</strong> {listingName}</p>
 
-      {/* Form to input additional required fields */}
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Date of Meetup</Form.Label>
@@ -78,9 +69,14 @@ return (
             required
           />
         </Form.Group>
+        <div className="d-flex justify-content-between">
+        <Button variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
         <Button variant="primary" type="submit">
           Submit Request
         </Button>
+        </div>
       </Form>
     </div>
   );
