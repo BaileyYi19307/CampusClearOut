@@ -16,55 +16,6 @@ import uploadMiddleware from "./uploadMiddleware.js";
 mongoose.connect(process.env.DSN);
 const app = express();
 const server = createServer(app);
-
-//parse JSON bodies
-app.use(express.json());
-
-// add mongo-sanitize middleware
-app.use(
-  mongoSanitize({
-    replaceWith: "_", // Replaces $ and .
-  })
-);
-
-// configure and use session management middleware
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET_KEY,
-    resave: false,
-    httpOnly: false,
-    saveUninitialized: true,
-    sameSite: "none",
-    cookie: {
-      secure: process.env.NODE_ENV === "production", //setting to secure only in production
-      maxAge: 86400000,
-    },
-  })
-);
-
-// enable CORS
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-  })
-);
-
-//adding protected routes here
-const authRequiredPaths = [
-  "/api/current-user",
-];
-
-//middleware to check if the user is authenticated before accessing protected routes
-app.use((req, res, next) => {
-  if (authRequiredPaths.includes(req.path)) {
-    if (!req.session.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-  }
-  next();
-});
-
 // initialize Socket.IO server with CORS configuration
 const io = new Server(server, {
   cors: {
@@ -99,6 +50,56 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+//parse JSON bodies
+app.use(express.json());
+// configure and use session management middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: false,
+    httpOnly: false,
+    saveUninitialized: true,
+    sameSite: "none",
+    cookie: {
+      secure: process.env.NODE_ENV === "production", //setting to secure only in production
+      maxAge: 86400000,
+    },
+  })
+);
+
+// enable CORS
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
+
+// add mongo-sanitize middleware
+app.use(
+  mongoSanitize({
+    replaceWith: "_", // Replaces $ and .
+  })
+);
+
+
+//adding protected routes here
+const authRequiredPaths = [
+  "/api/current-user",
+];
+
+//middleware to check if the user is authenticated before accessing protected routes
+app.use((req, res, next) => {
+  if (authRequiredPaths.includes(req.path)) {
+    if (!req.session.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  }
+  next();
+});
+
 
 
 app.post('/api/test-sanitize', (req, res) => {
@@ -489,7 +490,7 @@ app.get("/api/notifications", async (req, res) => {
     const notifications = await Notification.find({ recipient: userId }).sort({
       createdAt: -1,
     });
-    console.log("THE NOTIFICATIONS FOUND ARE....",notifications);
+    console.log("THE NOTIFICATIONS FOUND ARE....",notifications)
 
     res.status(200).json(notifications);
   } catch (error) {
