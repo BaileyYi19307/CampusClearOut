@@ -54,28 +54,15 @@ io.on("connection", (socket) => {
 //parse JSON bodies
 app.use(express.json());
 // configure and use session management middleware
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET_KEY,
-//     resave: false,
-//     httpOnly: false,
-//     saveUninitialized: true,
-//     sameSite: "none",
-//     cookie: {
-//       secure: process.env.NODE_ENV === "production", //setting to secure only in production
-//       maxAge: 86400000,
-//     },
-//   })
-// );
 app.use(
   session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Enable only for HTTPS in production
       httpOnly: true,
       sameSite: "none",
+      secure: false,
       maxAge: 86400000,
     },
   })
@@ -101,6 +88,16 @@ app.use(
 //adding protected routes here
 const authRequiredPaths = [
   "/api/current-user",
+  "/api/create-listing",
+  "/api/my-listings",
+  "/api/my-requests",
+  "/api/incoming-requests",
+  "/api/approve-request/:requestId",
+  "/api/deny-request/:requestId",
+  "/api/delete-request/:requestId",
+  "/api/approved-requests",
+  "/api/notifications",
+  "/api/delete-listing/:id",
 ];
 
 //middleware to check if the user is authenticated before accessing protected routes
@@ -118,7 +115,6 @@ app.use((req, res, next) => {
 app.get('/api/debug-session', (req, res) => {
   res.json({ session: req.session });
 });
-
 
 app.post('/api/test-sanitize', (req, res) => {
   console.log('Received sanitized request:', req.body);
