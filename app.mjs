@@ -560,6 +560,11 @@ app.post('/api/deny-request/:requestId',async(req,res)=>{
     const updatedRequest = await request.save();
     console.log("The request being denied is",updatedRequest);
 
+    // update listing's status back to "Available"
+    const listing = await Listing.findById(request.listing._id);
+    listing.status = "Available";
+    await listing.save()
+    
     // send notification
     await sendNotification(buyerId, message);
 
@@ -578,11 +583,20 @@ app.delete('/api/delete-request/:requestId', async (req, res) => {
   const requestId = req.params.requestId;
 
   try {
+    const request = await Request.findById(requestId).populate("listing", "_id");
+
+    // update listing's status back to "Available"
+    const listing = await Listing.findById(request.listing._id);
+    if (listing.status === "On Hold") {
+      listing.status = "Available";
+      await listing.save()
+    }
+    //delete the request
     const deletedRequest = await Request.findByIdAndDelete(requestId);
     console.log("Request deleted:", deletedRequest);
 
     //confirm the deletion
-    res.status(200).json({ message: "Request deleted successfully", deletedRequest });
+    res.status(200).json({ message: "Request deleted successfully and listing status updated", deletedRequest });
   } catch (error) {
     console.error("Error deleting request:", error);
     res.status(500).json({ error: "Failed to delete request" });

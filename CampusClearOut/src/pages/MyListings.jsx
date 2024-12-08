@@ -74,6 +74,7 @@ export function MyListings() {
             createdAt: request.createdAt,
           }));
           setApprovedRequests(formattedData);
+
         } else {
           console.error("Failed to fetch approved requests");
         }
@@ -120,6 +121,13 @@ export function MyListings() {
         const data = await response.json();
         console.log("here is the data for approving the request",data);
         setApprovedRequests((prev) => [...prev, data]);
+        
+        // update listing's status to "On Hold" for my active listings tab
+        setMyListings((prevListings) =>
+          prevListings.map((listing) =>
+            listing._id === data.listing._id ? { ...listing, status: "On Hold" } : listing
+          )
+        );
       }
     }
     catch(error){
@@ -127,9 +135,9 @@ export function MyListings() {
     };
   };
 
-  // //deny a request
-
+  //deny a request
   const denyRequest = async(requestId)=>{
+    console.log("This is the requestId",requestId);
     try{
       const response = await fetch(`${API}/api/deny-request/${requestId}`,{
         method:"POST",
@@ -139,10 +147,23 @@ export function MyListings() {
         credentials: "include", 
       });
       if (response.ok){
-        console.log("This is the response");
-        // remove the denied request from the state
-        setIncomingRequests((prevRequests) =>
+        const data = await response.json();
+        console.log("This is the response",data);
+
+      // remove the denied request from both states
+      setIncomingRequests((prevRequests) =>
           prevRequests.filter((request) => request.id !== requestId)
+        );
+
+        setApprovedRequests((prevRequests) =>
+          prevRequests.filter((request) => request.id !== requestId)
+        );
+
+        // update the listing's status back to "Available"
+        setMyListings((prevListings) =>
+          prevListings.map((listing) =>
+            listing._id === data.listing._id ? { ...listing, status: "Available" } : listing
+          )
         );
       }
     }
@@ -170,6 +191,14 @@ export function MyListings() {
               myListings.map((listing) => (
                 <Col key={listing._id} sm={6} md={4} lg={3} className="mb-4">
                   <div className="listing-card p-3 border rounded">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h4>{listing.title}</h4>
+                        <span className={`badge ${
+                          listing.status === "Available" ? "bg-success" : "bg-warning"
+                        }`}>
+                          {listing.status}
+                        </span>
+                    </div>
                   <img
                       src={
                         listing.images && listing.images.length > 0
@@ -179,7 +208,6 @@ export function MyListings() {
                       alt={listing.title}
                       className="img-fluid mb-3 rounded"
                     />
-                    <h4>{listing.title}</h4>
                     <p>{listing.description}</p>
                     <p>
                       <strong>Price:</strong> ${listing.price}
@@ -255,6 +283,7 @@ export function MyListings() {
               <th>Requestor</th>
               <th>Listing</th>
               <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -265,6 +294,15 @@ export function MyListings() {
                   <td>{approvedRequest.buyer}</td>
                   <td>{approvedRequest.listing.title}</td>
                   <td>{new Date(approvedRequest.scheduledDate).toLocaleString()}</td>
+                  <td>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => denyRequest(approvedRequest.id)}
+                    >
+                      Cancel
+                    </Button>
+                  </td>
                 </tr>
               ))
             ) : (
