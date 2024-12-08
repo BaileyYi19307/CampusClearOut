@@ -42,18 +42,13 @@ export function MyRequests() {
     }
     getRequests();
   },[user])
-
-  //who's the user? 
-  //Fetch the buyer's requests in the My Requests Page and display their status.
   
-
-
 
   return (
     <Container className="mt-5">
       <h2 className="mb-4">My Requests</h2>
       <Tabs defaultActiveKey="pending" id="request-tabs" className="mb-3">
-        {["Pending", "Approved", "Cancelled"].map((status) => (
+        {["Pending", "Approved", "Denied"].map((status) => (
           <Tab eventKey={status.toLowerCase()}title={`${status} Requests (${getRequestCount(status)})`}
           key={status}>
             <Table striped bordered hover responsive>
@@ -72,8 +67,8 @@ export function MyRequests() {
                   .map((request, index) => (
                     <tr key={request.id}>
                       <td>{index + 1}</td>
-                      <td>{request.listing}</td>
-                      <td>{new Date(request.scheduledDate).toLocaleDateString()}</td>
+                      <td>{request.listing.title}</td>
+                      <td>{new Date(request.scheduledDate).toLocaleString()}</td>
                       <td>{request.location}</td>
                       <td>
                         {status === "Pending" && (

@@ -79,7 +79,7 @@ app.use(
 );
 
 //adding protected routes here
-const authRequiredPaths = ["/api/current-user","/api/create-listing",'/api/my-listings','/api/make-request'];
+const authRequiredPaths = ["/api/current-user","/api/create-listing",'/api/my-listings'];
 
 //middleware to check if the user is authenticated before accessing protected routes
 app.use((req, res, next) => {
@@ -436,7 +436,7 @@ app.get('/api/my-requests', async (req, res) => {
   const userId = req.session.user.id;
 
   // find all requests where logged in user is buyer
-    const userRequests = await Request.find({ buyer: userId })
+    const userRequests = await Request.find({ buyer: userId }).populate("listing","title");
     res.status(200).json(userRequests);
   
 });
@@ -491,6 +491,22 @@ const saveNotification = async (userId, message) => {
     console.error("Error saving notification:", error);
   }
 }
+const sendNotification = async(buyerId,message)=>{
+  try{
+    if (userSockets[buyerId]) {
+      // send live notification to recipient if so
+      io.to(userSockets[buyerId]).emit("notification", { message });
+    } else {
+      console.log(`User ${buyerId} is offline. Notification saved to the database.`);
+    }
+    //otherwise save notification to database
+    console.log("now saving.......")
+    await saveNotification(buyerId,message);
+  }
+  catch(error){
+    console.log("Error sending notification:",error);
+  }
+}
 
 
 
@@ -501,27 +517,22 @@ app.post('/api/approve-request/:requestId',async(req,res)=>{
   console.log("This is the request id",requestId);
   try{
     //find request in database
-    const request = await Request.find({'_id':requestId});
+    const request = await Request.findOne({'_id':requestId}).populate("listing","title");
     //change it's status
-    request[0].status='Approved';
-    const savedRequest=await request[0].save();
+    request.status='Approved';
+    const savedRequest=await request.save();
     console.log("The saved request was",savedRequest);
 
 
     const buyerId = savedRequest.buyer;
     console.log("The buyer id was",buyerId);
-    const message = `Your request for ${savedRequest.listing} was approved by the seller.`;
+    const message = `Your request for ${savedRequest.listing.title} was approved by the seller.`;
 
-    //check if socketId for notification recipient exists (i.e. they're online)
-    if (userSockets[buyerId]) {
-      // send live notification to recipient if so
-      io.to(userSockets[buyerId]).emit("notification", { message });
-    } else {
-      console.log(`User ${buyerId} is offline. Notification saved to the database.`);
-    }
-    //otherwise save notification to database
-    await saveNotification(buyerId,message);
+    //send notification 
+    await sendNotification(buyerId, message);
 
+
+    console.log("The request is....", request);
     return res.status(200).json(request);
   }
   catch(error){
@@ -530,16 +541,26 @@ app.post('/api/approve-request/:requestId',async(req,res)=>{
   }
 });
 
-app.post('/api/delete-request/:requestId',async(req,res)=>{
+app.post('/api/deny-request/:requestId',async(req,res)=>{
   //delete the request 
   const requestId = req.params.requestId;
   try{
+    const request = await Request.findOne({ _id: requestId }).populate("listing", "title");
+    
+    const buyerId = request.buyer;
+    const message = `Your request for ${request.listing.title} was denied by the seller.`;
+   
     //delete request in database
     await Request.findByIdAndDelete(requestId);
-    res.status(200).json({ message: "Request deleted successfully" });
+
+    // send notification
+    await sendNotification(buyerId, message);
+
+    
+    res.status(200).json({ message: "Request denied and notification sent successfully" });
   }
   catch(error){
-    console.log("Error deleting request",error);
+    console.error("Error denying request",error);
     return res.status(500).json({error:'Error deleting request'});
   }
 

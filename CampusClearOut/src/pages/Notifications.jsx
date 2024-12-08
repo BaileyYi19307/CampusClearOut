@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "./Auth";
 import { useNavigate } from "react-router-dom";
-import { Dropdown, Button } from "react-bootstrap";
+import { Dropdown, Button,ListGroup,Container,Card } from "react-bootstrap";
+
 
 export const Notifications = () => {
   const { user, socket } = useAuth();
@@ -39,16 +40,31 @@ export const Notifications = () => {
   }, [socket]);
 
   return (
-    <div>
-      <h2>Notifications</h2>
-      <ul>
-        {notifications.map((notif, index) => (
-          <li key={index}>{notif.message}</li>
-        ))}
-      </ul>
-    </div>
+    <Container className="mt-5">
+      <Card>
+        <Card.Header as="h4" className="text-primary">
+          Notifications
+        </Card.Header>
+        <ListGroup variant="flush">
+          {notifications.length === 0 ? (
+            <ListGroup.Item>No new notifications</ListGroup.Item>
+          ) : (
+            notifications.map((notif, index) => (
+              <ListGroup.Item key={index}>
+                <span className="text-muted small">{notif.timestamp || "Just now"}</span>
+                <p className="mb-0">{notif.message}</p>
+              </ListGroup.Item>
+            ))
+          )}
+        </ListGroup>
+        <Card.Footer>
+        </Card.Footer>
+      </Card>
+    </Container>
   );
 };
+
+
 export const NotificationDropdown = () => {
     const { user, socket } = useAuth();
     const [notifications, setNotifications] = useState([]);

@@ -40,7 +40,7 @@ export function MyListings() {
 
       const formattedData = filteredData.map((request) => ({
         id: request._id,
-        listing: request.listing.title,
+        listing: request.listing,
         location: request.location,
         scheduledDate: request.scheduledDate,
         status: request.status,
@@ -65,7 +65,7 @@ export function MyListings() {
           console.log("fetching all approved requests....",data);
           const formattedData = data.map((request) => ({
             id: request._id,
-            listing: request.listing.title,
+            listing: request.listing,
             location: request.location,
             scheduledDate: request.scheduledDate,
             status: request.status,
@@ -107,7 +107,6 @@ export function MyListings() {
   };
 
   // //approve a request
-  // useEffect();
   const approveRequest = async (requestId) =>{
     try{
       const response = await fetch(`${API}/api/approve-request/${requestId}`,{
@@ -129,11 +128,10 @@ export function MyListings() {
   };
 
   // //deny a request
-  // useEffect();
 
   const denyRequest = async(requestId)=>{
     try{
-      const response = await fetch(`${API}/api/delete-request/${requestId}`,{
+      const response = await fetch(`${API}/api/deny-request/${requestId}`,{
         method:"POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,6 +149,7 @@ export function MyListings() {
     catch(error){
     }
   }
+
 
 
 
@@ -215,8 +214,8 @@ export function MyListings() {
                   <tr key={request.id}>
                     <td>{index + 1}</td>
                     <td>{request.buyer}</td>
-                    <td>{request.listing}</td>
-                    <td>{request.scheduledDate}</td>
+                    <td>{request.listing.title}</td>
+                    <td>{new Date(request.scheduledDate).toLocaleString()}</td>
                     <td>{request.status}</td>
                     <td>
                       <Button onClick={()=>approveRequest(request.id)} variant="success" size="sm">
@@ -253,10 +252,10 @@ export function MyListings() {
             {approvedRequests.length > 0 ? (
               approvedRequests.map((approvedRequest, index) => (
                 <tr key={approvedRequest.id}>
-                  <td>{approvedRequest + 1}</td>
+                  <td>{index+1}</td>
                   <td>{approvedRequest.buyer}</td>
-                  <td>{approvedRequest.listing}</td>
-                  <td>{approvedRequest.scheduledDate}</td>
+                  <td>{approvedRequest.listing.title}</td>
+                  <td>{new Date(approvedRequest.scheduledDate).toLocaleString()}</td>
                 </tr>
               ))
             ) : (
