@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Container, Row, Col, Button, Tabs, Tab, Table} from "react-bootstrap";
+import { Container, Row, Col, Button, Tabs, Tab, Table, Breadcrumb} from "react-bootstrap";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -175,8 +175,14 @@ export function MyListings() {
 
 
   return (
-    <Container>
-      <h2 className="my-4 text-center">My Listings & Requests</h2>
+    <Container className="mt-3">
+       <Breadcrumb>
+        <Breadcrumb.Item className="mt-3" linkAs={Link} linkProps={{ to: "/dashboard" }}>
+          Dashboard
+        </Breadcrumb.Item>
+        <Breadcrumb.Item className="mt-3" active>My Listings</Breadcrumb.Item>
+      </Breadcrumb>
+      <h2 className="my-4">My Listings</h2>
       <Tabs
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k)}

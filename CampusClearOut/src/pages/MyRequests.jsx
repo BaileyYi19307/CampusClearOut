@@ -1,7 +1,8 @@
 import React from "react";
 import { useEffect,useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "./Auth";
-import { Table, Button,Tabs,Tab, Container} from "react-bootstrap";
+import { Table, Button,Tabs,Tab, Container,Breadcrumb} from "react-bootstrap";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -69,7 +70,13 @@ export function MyRequests() {
   
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-3">
+      <Breadcrumb>
+        <Breadcrumb.Item className="mt-3" linkAs={Link} linkProps={{ to: "/dashboard" }}>
+          Dashboard
+        </Breadcrumb.Item>
+        <Breadcrumb.Item className="mt-3" active>My Listings</Breadcrumb.Item>
+      </Breadcrumb>
       <h2 className="mb-4">My Requests</h2>
       <Tabs defaultActiveKey="pending" id="request-tabs" className="mb-3">
         {["Pending", "Approved", "Denied"].map((status) => (

@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate,Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button, Card, Container, Row, Col} from "react-bootstrap";
+import { Button, Card, Container, Row, Col, Breadcrumb} from "react-bootstrap";
 import { useAuth } from "./Auth";
 import { MakeRequest } from "../components/MakeRequest";
 
@@ -46,6 +46,10 @@ export function ListingDetails() {
 
   return (
     <Container className="mt-4">
+      <Breadcrumb>
+        <Breadcrumb.Item href="/">Listings</Breadcrumb.Item>
+        <Breadcrumb.Item active>{listing.title || "Listing Details"}</Breadcrumb.Item>
+      </Breadcrumb>
       {showRequestForm ? (
         // conditionally render makerequest component
         <MakeRequest

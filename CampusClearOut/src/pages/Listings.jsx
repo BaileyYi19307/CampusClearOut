@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert} from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import Listing from "../components/Listing";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
 export function Listings() {
   const [listings, setListings] = useState([]);
+  const location = useLocation(); 
+  const [successMessage, setSuccessMessage] = useState(location.state?.message || "");
+
 
   //retrive all the listings
   useEffect(() => {
@@ -18,9 +22,26 @@ export function Listings() {
       .catch((error) => console.error("error fetching listings:", error));
   }, []);
 
+    // hide success message after 3 seconds
+    useEffect(() => {
+      if (successMessage) {
+        const timer = setTimeout(() => setSuccessMessage(""), 3000);
+        return () => clearTimeout(timer);
+      }
+    }, [successMessage]);
+
   return (
     <div>
       <Container>
+      {successMessage && (
+          <Alert
+            variant="success"
+            onClose={() => setSuccessMessage("")}
+            dismissible
+          >
+            {successMessage}
+          </Alert>
+        )}
       <header className="text-center py-4 mb-4 mt-5 bg-light shadow-sm rounded">
         <h1 className="text-primary display-4">Welcome to CampusClearOut</h1>
         <p className="text-muted lead">A marketplace for students to buy, sell, and trade essentials as the semester wraps up</p>
