@@ -5,11 +5,13 @@ import { Listing, User, Request, Notification } from "./db.mjs";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import session from "express-session";
+import mongoSanitize from 'express-mongo-sanitize';
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import uploadMiddleware from "./uploadMiddleware.js";
+
 
 //connect to mongodb
 mongoose.connect(process.env.DSN);
@@ -18,6 +20,13 @@ const server = createServer(app);
 
 //parse JSON bodies
 app.use(express.json());
+
+// add mongo-sanitize middleware
+app.use(
+  mongoSanitize({
+    replaceWith: "_", 
+  })
+);
 
 // configure and use session management middleware
 app.use(
@@ -99,6 +108,16 @@ io.on("connection", (socket) => {
     if (userId) {
       delete userSockets[userId];
     }
+  });
+});
+
+
+app.post('/api/test-sanitize', (req, res) => {
+  console.log('Received sanitized request:', req.body);
+  res.status(200).json({
+    sanitizedBody: req.body,
+    sanitizedQuery: req.query,
+    sanitizedParams: req.params,
   });
 });
 
