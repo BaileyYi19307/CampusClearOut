@@ -12,7 +12,6 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import uploadMiddleware from "./uploadMiddleware.js";
 
-
 //connect to mongodb
 mongoose.connect(process.env.DSN);
 const app = express();
@@ -24,7 +23,7 @@ app.use(express.json());
 // add mongo-sanitize middleware
 app.use(
   mongoSanitize({
-    replaceWith: "_", 
+    replaceWith: "_", // Replaces $ and .
   })
 );
 
@@ -54,16 +53,6 @@ app.use(
 //adding protected routes here
 const authRequiredPaths = [
   "/api/current-user",
-  "/api/create-listing",
-  "/api/my-listings",
-  "/api/my-requests",
-  "/api/incoming-requests",
-  "/api/approve-request/:requestId",
-  "/api/deny-request/:requestId",
-  "/api/delete-request/:requestId",
-  "/api/approved-requests",
-  "/api/notifications",
-  "/api/delete-listing/:id",
 ];
 
 //middleware to check if the user is authenticated before accessing protected routes
@@ -660,8 +649,13 @@ app.get("/api/approved-requests", async (req, res) => {
   }
 });
 
-const HOST = process.env.HOST || "127.0.0.1";
+// const HOST = process.env.HOST || "127.0.0.1";
+// const PORT = process.env.PORT || 3000;
+// server.listen(PORT, HOST, () => {
+//   console.log(`Server is running at http://${HOST}:${PORT}`);
+// });
+
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, HOST, () => {
-  console.log(`Server is running at http://${HOST}:${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server is running at port ${PORT}`);
 });
