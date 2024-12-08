@@ -474,7 +474,10 @@ app.get("/api/incoming-requests", async (req, res) => {
 
 // route to fetch all notifications for a specific user
 app.get("/api/notifications", async (req, res) => {
+  console.log("HERE req.query is.....",req.query);
   const { userId } = req.query;
+
+  console.log("HERE userId is.....",userId);
 
   try {
     if (!userId) {
@@ -486,6 +489,7 @@ app.get("/api/notifications", async (req, res) => {
     const notifications = await Notification.find({ recipient: userId }).sort({
       createdAt: -1,
     });
+    console.log("THE NOTIFICATIONS FOUND ARE....",notifications);
 
     res.status(200).json(notifications);
   } catch (error) {
@@ -657,5 +661,5 @@ app.get("/api/approved-requests", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server is running at port ${PORT}`);
+  console.log(`Server is running at port${PORT}`);
 });

@@ -12,6 +12,7 @@ export const Notifications = () => {
     const fetchNotifications = async () => {
       if (user) {
         try {
+          console.log("THE USER ID HERE IS",user.id);
           const response = await fetch(`/api/notifications?userId=${user.id}`);
           const data = await response.json();
 
@@ -53,7 +54,7 @@ export const Notifications = () => {
           {notifications.length === 0 ? (
             <ListGroup.Item>No new notifications</ListGroup.Item>
           ) : (
-            
+
             /* iterate over notifications and display each one */
             notifications.map((notif, index) => (
               <ListGroup.Item key={index}>
