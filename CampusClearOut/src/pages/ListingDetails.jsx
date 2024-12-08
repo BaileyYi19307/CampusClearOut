@@ -29,6 +29,10 @@ export function ListingDetails() {
       );
   }, [postId]);
 
+  //check if the buyer is the seller
+  const isSelfRequest = user?.id === listing?.seller?._id;
+
+
   const handleRequestItem = () => {
     setShowRequestForm(true); 
     if (!user) {
@@ -38,6 +42,7 @@ export function ListingDetails() {
   const handleCancelRequest = () => {
     setShowRequestForm(false);
   };
+
 
   return (
     <Container className="mt-4">
@@ -83,15 +88,18 @@ export function ListingDetails() {
                         <strong>Price:</strong>{" "}
                         <span className="text-success">${listing.price}</span>
                       </p>
-                      <div className="mt-4">
-                        <Button
-                          variant="primary"
-                          className="w-100"
-                          onClick={handleRequestItem}
-                        >
-                          Request Item
-                        </Button>
-                      </div>
+                      {/* only render request item if buyer is not same as seller */}
+                      {!isSelfRequest && (
+                        <div className="mt-4">
+                          <Button
+                            variant="primary"
+                            className="w-100"
+                            onClick={handleRequestItem}
+                          >
+                            Request Item
+                          </Button>
+                        </div>
+                      )}
                     </Card.Body>
                   </Col>
                 </Row>

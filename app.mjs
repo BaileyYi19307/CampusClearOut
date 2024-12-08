@@ -492,6 +492,7 @@ const saveNotification = async (userId, message) => {
   }
 }
 const sendNotification = async(buyerId,message)=>{
+  console.log("sending notification");
   try{
     if (userSockets[buyerId]) {
       // send live notification to recipient if so
@@ -546,18 +547,19 @@ app.post('/api/deny-request/:requestId',async(req,res)=>{
   const requestId = req.params.requestId;
   try{
     const request = await Request.findOne({ _id: requestId }).populate("listing", "title");
-    
+    //create message
     const buyerId = request.buyer;
     const message = `Your request for ${request.listing.title} was denied by the seller.`;
    
-    //delete request in database
-    await Request.findByIdAndDelete(requestId);
+    //update status
+    request.status = "Denied";
+    const updatedRequest = await request.save();
+    console.log("The request being denied is",updatedRequest);
 
     // send notification
     await sendNotification(buyerId, message);
 
-    
-    res.status(200).json({ message: "Request denied and notification sent successfully" });
+    res.status(200).json(updatedRequest);
   }
   catch(error){
     console.error("Error denying request",error);

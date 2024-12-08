@@ -36,7 +36,7 @@ export function MyListings() {
         console.log("These are the incoming requests",data);
         
       // filter out approved requests
-      const filteredData = data.filter((request) => request.status !== "Approved");
+      const filteredData = data.filter((request) => request.status === "Pending");
 
       const formattedData = filteredData.map((request) => ({
         id: request._id,

@@ -14,7 +14,6 @@ export function MyRequests() {
   const getRequestCount = (status) =>
     requests.filter((request) => request.status === status).length;
 
-
   //also want this to rerender if the status of a request changes
   useEffect(()=>{
     //check if any user is logged in; if not, return without running
@@ -107,9 +106,13 @@ export function MyRequests() {
                             </Button>
                           </>
                         )}
-                        {status === "Approved" && (
-                          <Button variant="info" size="sm">
-                            View Details
+                        {["Approved", "Denied"].includes(status) && (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleCancelRequest(request._id)}
+                          >
+                            Erase Request
                           </Button>
                         )}
                       </td>

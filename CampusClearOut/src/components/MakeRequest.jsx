@@ -1,5 +1,4 @@
 import React from "react";
-import { useLocation, useNavigate} from "react-router-dom";
 import { useAuth } from "../pages/Auth";
 import {useRef} from "react";
 import { Form, Button } from "react-bootstrap";
@@ -7,9 +6,8 @@ const API = import.meta.env.VITE_BACKEND_URL;
 
 
 export function MakeRequest({seller,sellerName,buyer,listing,listingName,onCancel}){
-    //get state passed via navigate
-    const navigate=useNavigate();
     const meetingDate = useRef();
+    const meetingTime = useRef(); 
     const meetingLocation = useRef();
 
     //handle form submission 
@@ -19,7 +17,7 @@ export function MakeRequest({seller,sellerName,buyer,listing,listingName,onCance
             listing,
             buyer,
             seller,
-            scheduledDate: meetingDate .current.value, 
+            scheduledDate: `${meetingDate.current.value}T${meetingTime.current.value}:00`,
             location: meetingLocation.current.value, 
           };
 
@@ -44,6 +42,7 @@ export function MakeRequest({seller,sellerName,buyer,listing,listingName,onCance
           }
     };
 
+
 //make a form 
 return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
@@ -59,6 +58,10 @@ return (
             ref={meetingDate}
             required
           />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Time of Meetup</Form.Label>
+          <Form.Control type="time" ref={meetingTime} required />
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Location</Form.Label>

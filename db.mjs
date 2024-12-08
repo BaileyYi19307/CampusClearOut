@@ -10,16 +10,6 @@ const userSchema = new mongoose.Schema({
   isVerified:{type:Boolean,default:false},
   listings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Listing" }], // references to listings posted by the user
   requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Request" }], // references to requests made by the user
-  ratings: {
-    asSeller: {
-      totalScore: { type: Number, default: 0 }, // total score from ratings as a seller
-      count: { type: Number, default: 0 }, // number of ratings received as a seller
-    },
-    asBuyer: {
-      totalScore: { type: Number, default: 0 }, // total score from ratings as a buyer
-      count: { type: Number, default: 0 }, // number of ratings received as a buyer
-    },
-  },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -32,10 +22,8 @@ const listingSchema = new mongoose.Schema({
   description: { type: String, required: true },
   price: { type: Number, required: true },
   images: [{ type: String }], //store image URLS
-  // images: [{ type: String }], // array of image urls or paths
   // status: { type: String, enum: ['Available', 'Reserved', 'Sold'], default: 'Available' },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // reference to the user (seller)
-  // requests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Request' }], // references to requests for this listing
   postedAt: { type: Date, default: Date.now }
 });
 
@@ -57,12 +45,6 @@ const requestSchema = new mongoose.Schema({
     type: String,
     enum: ["Pending", "Approved", "Completed", "Denied","No-show"],
     default: "Pending",
-  },
-  buyerRating: {
-    score: { type: Number, min: 1, max: 5 }, // rating given to the buyer
-  },
-  sellerRating: {
-    score: { type: Number, min: 1, max: 5 }, // rating given to the seller
   },
   createdAt: { type: Date, default: Date.now },
 });

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button,Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_BACKEND_URL;
@@ -52,6 +52,7 @@ export function CreateListing() {
   };
 
   return (
+    <Container className="mt-5 d-flex justify-content-center">
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="formTitle" className="mb-3">
         <Form.Label>Title:</Form.Label>
@@ -100,5 +101,6 @@ export function CreateListing() {
         Submit Listing
       </Button>
     </Form>
+    </Container>
   );
 }
