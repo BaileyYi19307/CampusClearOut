@@ -42,6 +42,31 @@ export function MyRequests() {
     }
     getRequests();
   },[user])
+
+  //handle cancelling a request
+  const handleCancelRequest= async (requestId)=>{
+    console.log("the request id to cancel is", requestId);
+    try{
+      const response = await fetch(`${API}/api/delete-request/${requestId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Request deleted successfully:", data);
+  
+        // update state to remove deleted request
+        setRequests((prevRequests) =>
+          prevRequests.filter((request) => request._id !== requestId)
+        );
+      } else {
+        console.error("Failed to delete request");
+      }
+    }
+    catch(error){
+      console.error("Error deleting request:", err);
+    }
+  }
   
 
   return (
@@ -65,7 +90,7 @@ export function MyRequests() {
                 {requests
                   .filter((request) => request.status === status)
                   .map((request, index) => (
-                    <tr key={request.id}>
+                    <tr key={request._id}>
                       <td>{index + 1}</td>
                       <td>{request.listing.title}</td>
                       <td>{new Date(request.scheduledDate).toLocaleString()}</td>
@@ -76,9 +101,7 @@ export function MyRequests() {
                             <Button
                               variant="danger"
                               size="sm"
-                              onClick={() =>
-                                handleStatusChange(request.id, "Cancelled")
-                              }
+                              onClick={() => handleCancelRequest(request._id)}
                             >
                               Cancel
                             </Button>

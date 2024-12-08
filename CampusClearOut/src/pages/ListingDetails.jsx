@@ -98,20 +98,6 @@ export function ListingDetails() {
               </Card>
             </Col>
           </Row>
-
-          <Row className="mt-4">
-            <Col lg={8} className="mx-auto">
-              <Card className="p-3">
-                <h5>Additional Information</h5>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
-                  imperdiet, urna eget hendrerit scelerisque, lorem ipsum fermentum
-                  nunc, nec gravida libero ligula eget metus. Curabitur ut neque
-                  vitae nulla cursus vulputate.
-                </p>
-              </Card>
-            </Col>
-          </Row>
         </>
       )}
     </Container>

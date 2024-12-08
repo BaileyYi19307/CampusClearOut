@@ -170,6 +170,15 @@ export function MyListings() {
               myListings.map((listing) => (
                 <Col key={listing._id} sm={6} md={4} lg={3} className="mb-4">
                   <div className="listing-card p-3 border rounded">
+                  <img
+                      src={
+                        listing.images && listing.images.length > 0
+                          ? listing.images[0]
+                          : "https://via.placeholder.com/600x400?text=No+Image+Available"
+                      }
+                      alt={listing.title}
+                      className="img-fluid mb-3 rounded"
+                    />
                     <h4>{listing.title}</h4>
                     <p>{listing.description}</p>
                     <p>
