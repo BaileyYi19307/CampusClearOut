@@ -16,13 +16,12 @@ const userSchema = new mongoose.Schema({
 // Listing schema
 // represents items posted by users for sale or giveaway
 // includes references to the seller and requests associated with the listing
-
 const listingSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
   images: [{ type: String }], //store image URLS
-  // status: { type: String, enum: ['Available', 'Reserved', 'Sold'], default: 'Available' },
+  status: { type: String, enum: ['Available', 'On Hold'], default: 'Available' },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // reference to the user (seller)
   postedAt: { type: Date, default: Date.now }
 });
@@ -30,7 +29,6 @@ const listingSchema = new mongoose.Schema({
 // Request schema
 // represents potential meetups for transactions, with references to the buyer, seller, and associated listing
 // also includes fields for ratings and feedback between users
-
 const requestSchema = new mongoose.Schema({
   listing: {
     type: mongoose.Schema.Types.ObjectId,
@@ -43,7 +41,7 @@ const requestSchema = new mongoose.Schema({
   location: { type: String, required: true },
   status: {
     type: String,
-    enum: ["Pending", "Approved", "Completed", "Denied","No-show"],
+    enum: ["Pending", "Approved", "Denied",],
     default: "Pending",
   },
   createdAt: { type: Date, default: Date.now },
@@ -52,7 +50,6 @@ const requestSchema = new mongoose.Schema({
 const notificationSchema = new mongoose.Schema({
   recipient: {type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
   message: {type:String,required:true},
-  seen: { type: Boolean, default: true }, //track whether a notification is new or not
   createdAt: {type:Date,default:Date.now()},
 })
 

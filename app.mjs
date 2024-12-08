@@ -524,6 +524,10 @@ app.post('/api/approve-request/:requestId',async(req,res)=>{
     const savedRequest=await request.save();
     console.log("The saved request was",savedRequest);
 
+    //update the listing to "On Hold"
+    const listing = await Listing.findById(request.listing._id);
+    listing.status = "On Hold";
+    await listing.save();
 
     const buyerId = savedRequest.buyer;
     console.log("The buyer id was",buyerId);

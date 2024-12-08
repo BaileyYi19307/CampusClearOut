@@ -41,6 +41,7 @@ export function Listings() {
                 description={listing.description}
                 price={listing.price}
                 image={listing.images && listing.images.length > 0 ? listing.images[0] : null}
+                status={listing.status} // Pass status to Listing component
                 link={`/listings/${listing._id}`}
               />
             </Col>
