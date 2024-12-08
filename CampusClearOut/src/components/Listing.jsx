@@ -5,20 +5,25 @@ import { Card, Badge, Button } from "react-bootstrap";
 function Listing({ seller, title, description, price, image, status, link }) {
   const placeholderImage = "https://via.placeholder.com/150?text=No+Image";
 
-  //what badge type? determine based on status
+  // determine badge colour based on status
   const badgeVariant =
-  status === "Available" ? "success" :
-  status === "On Hold" ? "warning" :
-  "secondary";
+    status === "Available"
+      ? "success"
+      : status === "On Hold"
+      ? "warning"
+      : "secondary";
 
   return (
     <Card className="listing-card shadow-sm mb-4">
+      {/* header with title and status badge */}
       <Card.Body className="pb-0">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <Card.Title className="mb-0">{title}</Card.Title>
           <Badge bg={badgeVariant}>{status}</Badge>
         </div>
       </Card.Body>
+
+      {/* listing image */}
       <Card.Img
         variant="top"
         src={image || placeholderImage}
@@ -26,6 +31,7 @@ function Listing({ seller, title, description, price, image, status, link }) {
         className="listing-image"
       />
 
+      {/* main content: seller info, description, price, and button */}
       <Card.Body>
         <Card.Text>
           <strong>Posted by:</strong> {seller}
@@ -33,6 +39,8 @@ function Listing({ seller, title, description, price, image, status, link }) {
         <Card.Text>{description}</Card.Text>
         <div className="d-flex justify-content-between align-items-center">
           <span className="text-success fw-bold">${price}</span>
+
+          {/* button behavior changes based on status */}
           <Button
             as={Link}
             to={status === "Available" ? link : "#"}

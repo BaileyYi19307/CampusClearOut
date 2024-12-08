@@ -1,7 +1,7 @@
 import React from "react";
-import { useParams, useNavigate,Outlet } from "react-router-dom";
+import { useParams, useNavigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Button, Card, Container, Row, Col, Breadcrumb} from "react-bootstrap";
+import { Button, Card, Container, Row, Col, Breadcrumb } from "react-bootstrap";
 import { useAuth } from "./Auth";
 import { MakeRequest } from "../components/MakeRequest";
 
@@ -11,47 +11,60 @@ export function ListingDetails() {
   //extract postId parameter from URL
   const { user, setUser } = useAuth();
   const { postId } = useParams();
-  const [listing, setListing] = useState([]);
   const navigate = useNavigate();
+
+  //manage listing data and form visibility state
+  const [listing, setListing] = useState([]);
   const [showRequestForm, setShowRequestForm] = useState(false);
 
-
-  //fetch listing details
+  //fetch listing details when component mounts or postId changes
   useEffect(() => {
-    fetch(`${API}/api/listings/${postId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("This is data", data);
-        setListing(data);
-      })
-      .catch((error) =>
-        console.error("error fetching specific listing:", error)
-      );
+    async function getListingDetails() {
+      try {
+        let response = await fetch(`${API}/api/listings/${postId}`);
+
+        if (response.ok) {
+          let data = await response.json();
+          setListing(data);
+        } else {
+          console.error("failed to fetch listing details");
+        }
+      } catch (error) {
+        console.error("error fetching specific listing:", error);
+      }
+    }
+    getListingDetails();
   }, [postId]);
 
-  //check if the buyer is the seller
+  //check if the user is the seller
   const isSelfRequest = user?.id === listing?.seller?._id;
 
-
+  // show the request form or navigate to login if the user is not logged in
   const handleRequestItem = () => {
-    setShowRequestForm(true); 
+    setShowRequestForm(true);
     if (!user) {
-      navigate('/login');
+      navigate("/login");
     }
   };
+
+  //cancel the request form
   const handleCancelRequest = () => {
     setShowRequestForm(false);
   };
 
-
   return (
     <Container className="mt-4">
+
+      {/* breadcrumb navigation */}
       <Breadcrumb>
         <Breadcrumb.Item href="/">Listings</Breadcrumb.Item>
-        <Breadcrumb.Item active>{listing.title || "Listing Details"}</Breadcrumb.Item>
+        <Breadcrumb.Item active>
+          {listing.title || "Listing Details"}
+        </Breadcrumb.Item>
       </Breadcrumb>
+
+      {/* conditionally render the request form */}
       {showRequestForm ? (
-        // conditionally render makerequest component
         <MakeRequest
           seller={listing.seller}
           sellerName={listing.seller?.username || "Anonymous"}
@@ -62,6 +75,7 @@ export function ListingDetails() {
         />
       ) : (
         <>
+          {/* listing details */}
           <Row>
             <Col lg={8} className="mx-auto">
               <Card className="p-3 mb-5 bg-white rounded">
@@ -83,7 +97,8 @@ export function ListingDetails() {
                     <Card.Body>
                       <h2 className="text-primary mb-3">{listing.title}</h2>
                       <p className="text-muted">
-                        <strong>Seller:</strong> {listing.seller?.username || "Anonymous"}
+                        <strong>Seller:</strong>{" "}
+                        {listing.seller?.username || "Anonymous"}
                       </p>
                       <p className="mb-4">
                         <strong>Description:</strong> {listing.description}
@@ -92,6 +107,7 @@ export function ListingDetails() {
                         <strong>Price:</strong>{" "}
                         <span className="text-success">${listing.price}</span>
                       </p>
+
                       {/* only render request item if buyer is not same as seller */}
                       {!isSelfRequest && (
                         <div className="mt-4">

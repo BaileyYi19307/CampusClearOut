@@ -4,10 +4,13 @@ import { useLocation } from "react-router-dom";
 
 export function EmailVerification() {
   const location = useLocation();
+
+  // retrieve the email from the location state, default to "your email" if not provided
   const email = location.state?.email || "your email";
 
   return (
     <div className="email-verification">
+      {/* informational alert to guide the user to verify their email */}
       <Alert variant="info" className="mt-3">
         <h4>Check Your Email</h4>
         <p>

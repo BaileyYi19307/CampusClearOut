@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Container, Row, Col, Button, Tabs, Tab, Table, Breadcrumb} from "react-bootstrap";
+import {Container,Row,Col,Button,Tabs,Tab,Table,Breadcrumb} from "react-bootstrap";
 
 const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -9,13 +9,13 @@ export function MyListings() {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [activeTab, setActiveTab] = useState("listings");
   const [searchParams] = useSearchParams();
-  const [approvedRequests,setApprovedRequests]=useState([]);
+  const [approvedRequests, setApprovedRequests] = useState([]);
   const isCreated = searchParams.get("created") === "true";
 
-  // retrieve all my listings
+  // fetch all user listings
   useEffect(() => {
     fetch(`${API}/api/my-listings`, {
-      credentials: "include", 
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((listingData) => {
@@ -25,44 +25,47 @@ export function MyListings() {
       .catch((error) => console.error("Error fetching listings:", error));
   }, []);
 
-
-  // retrieve incoming requests
+  // retrieve pending incoming requests
   useEffect(() => {
     fetch(`${API}/api/incoming-requests`, {
       credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("These are the incoming requests",data);
-        
-      // filter out approved requests
-      const filteredData = data.filter((request) => request.status === "Pending");
+        console.log("These are the incoming requests", data);
 
-      const formattedData = filteredData.map((request) => ({
-        id: request._id,
-        listing: request.listing,
-        location: request.location,
-        scheduledDate: request.scheduledDate,
-        status: request.status,
-        buyer: request.buyer.username,
-        sellerUsername: request.seller.username,
-        createdAt: request.createdAt,
-      }));
-        setIncomingRequests(formattedData)})
+        // filter out approved requests
+        const filteredData = data.filter(
+          (request) => request.status === "Pending"
+        );
+
+        const formattedData = filteredData.map((request) => ({
+          id: request._id,
+          listing: request.listing,
+          location: request.location,
+          scheduledDate: request.scheduledDate,
+          status: request.status,
+          buyer: request.buyer.username,
+          sellerUsername: request.seller.username,
+          createdAt: request.createdAt,
+        }));
+        setIncomingRequests(formattedData);
+      })
       .catch((error) => console.error("Error fetching requests:", error));
   }, [approvedRequests]);
 
-
+  // fetch approved requests
   useEffect(() => {
     const fetchApprovedRequests = async () => {
       try {
         const response = await fetch(`${API}/api/approved-requests`, {
           credentials: "include",
         });
-  
+
         if (response.ok) {
           const data = await response.json();
-          console.log("fetching all approved requests....",data);
+
+          // format approved requests for display
           const formattedData = data.map((request) => ({
             id: request._id,
             listing: request.listing,
@@ -74,7 +77,6 @@ export function MyListings() {
             createdAt: request.createdAt,
           }));
           setApprovedRequests(formattedData);
-
         } else {
           console.error("Failed to fetch approved requests");
         }
@@ -82,10 +84,9 @@ export function MyListings() {
         console.error("Error fetching approved requests:", error);
       }
     };
-  
-    fetchApprovedRequests(); 
+
+    fetchApprovedRequests();
   }, []);
-  
 
   // handle deleting a listing
   const handleDelete = async (listingId) => {
@@ -108,53 +109,55 @@ export function MyListings() {
   };
 
   // //approve a request
-  const approveRequest = async (requestId) =>{
-    try{
-      const response = await fetch(`${API}/api/approve-request/${requestId}`,{
+  const approveRequest = async (requestId) => {
+    try {
+      const response = await fetch(`${API}/api/approve-request/${requestId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", 
+        credentials: "include",
       });
-      if (response.ok){
+      if (response.ok) {
         const data = await response.json();
-        console.log("here is the data for approving the request",data);
+        //update approved requests
         setApprovedRequests((prev) => [...prev, data]);
-        
+
         // update listing's status to "On Hold" for my active listings tab
         setMyListings((prevListings) =>
           prevListings.map((listing) =>
-            listing._id === data.listing._id ? { ...listing, status: "On Hold" } : listing
+            listing._id === data.listing._id
+              ? { ...listing, status: "On Hold" }
+              : listing
           )
         );
       }
+    } catch (error) {
+      console.error("Error approving listing:", error);
     }
-    catch(error){
-
-    };
   };
 
   //deny a request
-  const denyRequest = async(requestId)=>{
-    console.log("This is the requestId",requestId);
-    try{
-      const response = await fetch(`${API}/api/deny-request/${requestId}`,{
-        method:"POST",
+  const denyRequest = async (requestId) => {
+    console.log("This is the requestId", requestId);
+    try {
+      const response = await fetch(`${API}/api/deny-request/${requestId}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", 
+        credentials: "include",
       });
-      if (response.ok){
+      if (response.ok) {
         const data = await response.json();
-        console.log("This is the response",data);
+        console.log("This is the response", data);
 
-      // remove the denied request from both states
-      setIncomingRequests((prevRequests) =>
+        // remove the denied request from both states
+        setIncomingRequests((prevRequests) =>
           prevRequests.filter((request) => request.id !== requestId)
         );
 
+        //update approved requests
         setApprovedRequests((prevRequests) =>
           prevRequests.filter((request) => request.id !== requestId)
         );
@@ -162,34 +165,47 @@ export function MyListings() {
         // update the listing's status back to "Available"
         setMyListings((prevListings) =>
           prevListings.map((listing) =>
-            listing._id === data.listing._id ? { ...listing, status: "Available" } : listing
+            listing._id === data.listing._id
+              ? { ...listing, status: "Available" }
+              : listing
           )
         );
       }
-    }
-    catch(error){
-    }
-  }
-
-
-
+    } catch (error) {}
+  };
 
   return (
     <Container className="mt-3">
-       <Breadcrumb>
-        <Breadcrumb.Item className="mt-3" linkAs={Link} linkProps={{ to: "/dashboard" }}>
+      {/* breadcrumb navigation */}
+      <Breadcrumb>
+        <Breadcrumb.Item
+          className="mt-3"
+          linkAs={Link}
+          linkProps={{ to: "/dashboard" }}
+        >
           Dashboard
         </Breadcrumb.Item>
-        <Breadcrumb.Item className="mt-3" active>My Listings</Breadcrumb.Item>
+        <Breadcrumb.Item className="mt-3" active>
+          My Listings
+        </Breadcrumb.Item>
       </Breadcrumb>
       <h2 className="my-4">My Listings</h2>
+
+      {/* tabs for managing listings and requests */}
       <Tabs
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k)}
         className="mb-3"
       >
-        <Tab eventKey="listings" title={`My Active Listings (${myListings.length})`}>
-          <Button variant="primary" as={Link} to={"/dashboard/mylistings/create"}>
+        <Tab
+          eventKey="listings"
+          title={`My Active Listings (${myListings.length})`}
+        >
+          <Button
+            variant="primary"
+            as={Link}
+            to={"/dashboard/mylistings/create"}
+          >
             Create New Listing
           </Button>
           <Row className="listing-grid mt-3">
@@ -199,13 +215,17 @@ export function MyListings() {
                   <div className="listing-card p-3 border rounded">
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <h4>{listing.title}</h4>
-                        <span className={`badge ${
-                          listing.status === "Available" ? "bg-success" : "bg-warning"
-                        }`}>
-                          {listing.status}
-                        </span>
+                      <span
+                        className={`badge ${
+                          listing.status === "Available"
+                            ? "bg-success"
+                            : "bg-warning"
+                        }`}
+                      >
+                        {listing.status}
+                      </span>
                     </div>
-                  <img
+                    <img
                       src={
                         listing.images && listing.images.length > 0
                           ? listing.images[0]
@@ -239,7 +259,12 @@ export function MyListings() {
             )}
           </Row>
         </Tab>
-        <Tab eventKey="requests" title={`Pending Requests to Review (${incomingRequests.length})`}>
+
+        {/* Pending Requests Tab */}
+        <Tab
+          eventKey="requests"
+          title={`Pending Requests to Review (${incomingRequests.length})`}
+        >
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -261,10 +286,19 @@ export function MyListings() {
                     <td>{new Date(request.scheduledDate).toLocaleString()}</td>
                     <td>{request.status}</td>
                     <td>
-                      <Button onClick={()=>approveRequest(request.id)} variant="success" size="sm">
+                      <Button
+                        onClick={() => approveRequest(request.id)}
+                        variant="success"
+                        size="sm"
+                      >
                         Approve
                       </Button>
-                      <Button onClick={()=> denyRequest(request.id)} variant="danger" size="sm" className="ms-2">
+                      <Button
+                        onClick={() => denyRequest(request.id)}
+                        variant="danger"
+                        size="sm"
+                        className="ms-2"
+                      >
                         Decline
                       </Button>
                     </td>
@@ -281,47 +315,53 @@ export function MyListings() {
           </Table>
         </Tab>
 
-      <Tab eventKey="approved" title={`Requests I've Approved (${approvedRequests.length})`}>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Requestor</th>
-              <th>Listing</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {approvedRequests.length > 0 ? (
-              approvedRequests.map((approvedRequest, index) => (
-                <tr key={approvedRequest.id}>
-                  <td>{index+1}</td>
-                  <td>{approvedRequest.buyer}</td>
-                  <td>{approvedRequest.listing.title}</td>
-                  <td>{new Date(approvedRequest.scheduledDate).toLocaleString()}</td>
-                  <td>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => denyRequest(approvedRequest.id)}
-                    >
-                      Cancel
-                    </Button>
+        {/* Approved Requests Tab */}
+        <Tab
+          eventKey="approved"
+          title={`Requests I've Approved (${approvedRequests.length})`}
+        >
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Requestor</th>
+                <th>Listing</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {approvedRequests.length > 0 ? (
+                approvedRequests.map((approvedRequest, index) => (
+                  <tr key={approvedRequest.id}>
+                    <td>{index + 1}</td>
+                    <td>{approvedRequest.buyer}</td>
+                    <td>{approvedRequest.listing.title}</td>
+                    <td>
+                      {new Date(approvedRequest.scheduledDate).toLocaleString()}
+                    </td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => denyRequest(approvedRequest.id)}
+                      >
+                        Cancel
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" className="text-center">
+                    No approved requests.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center">
-                  No approved requests.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-      </Tab>
-    </Tabs>
+              )}
+            </tbody>
+          </Table>
+        </Tab>
+      </Tabs>
     </Container>
   );
 }

@@ -28,13 +28,12 @@ const listingSchema = new mongoose.Schema({
 
 // Request schema
 // represents potential meetups for transactions, with references to the buyer, seller, and associated listing
-// also includes fields for ratings and feedback between users
 const requestSchema = new mongoose.Schema({
   listing: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Listing",
     required: true,
-  }, // reference to the associated listing
+  }, 
   buyer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // reference to the user (buyer)
   seller: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // reference to the user (seller)
   scheduledDate: { type: Date, required: true },
@@ -47,6 +46,9 @@ const requestSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+
+// Notification schema
+// Defines the structure for notifications sent to users
 const notificationSchema = new mongoose.Schema({
   recipient: {type:mongoose.Schema.Types.ObjectId,ref:"User",required:true},
   message: {type:String,required:true},
