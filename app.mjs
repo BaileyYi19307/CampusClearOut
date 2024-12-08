@@ -54,15 +54,28 @@ io.on("connection", (socket) => {
 //parse JSON bodies
 app.use(express.json());
 // configure and use session management middleware
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET_KEY,
+//     resave: false,
+//     httpOnly: false,
+//     saveUninitialized: true,
+//     sameSite: "none",
+//     cookie: {
+//       secure: process.env.NODE_ENV === "production", //setting to secure only in production
+//       maxAge: 86400000,
+//     },
+//   })
+// );
 app.use(
   session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
-    httpOnly: false,
     saveUninitialized: true,
-    sameSite: "none",
     cookie: {
-      secure: process.env.NODE_ENV === "production", //setting to secure only in production
+      secure: process.env.NODE_ENV === "production", // Enable only for HTTPS in production
+      httpOnly: true,
+      sameSite: "none",
       maxAge: 86400000,
     },
   })
@@ -100,6 +113,11 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+app.get('/api/debug-session', (req, res) => {
+  res.json({ session: req.session });
+});
 
 
 app.post('/api/test-sanitize', (req, res) => {
