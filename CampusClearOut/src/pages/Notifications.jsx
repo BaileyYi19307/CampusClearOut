@@ -3,6 +3,8 @@ import { useAuth } from "./Auth";
 import { useNavigate } from "react-router-dom";
 import { Dropdown, Button, ListGroup, Container, Card } from "react-bootstrap";
 
+const API = import.meta.env.VITE_BACKEND_URL;
+
 export const Notifications = () => {
   const { user, socket } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -13,7 +15,7 @@ export const Notifications = () => {
       if (user) {
         try {
           console.log("THE USER ID HERE IS",user.id);
-          const response = await fetch(`/api/notifications?userId=${user.id}`);
+          const response = await fetch(`${API}/api/notifications?userId=${user.id}`);
           const data = await response.json();
 
           // update state with fetched notifications
@@ -83,7 +85,7 @@ export const NotificationDropdown = () => {
     const fetchNotifications = async () => {
       if (user) {
         try {
-          const response = await fetch(`/api/notifications?userId=${user.id}`);
+          const response = await fetch(`${API}/api/notifications?userId=${user.id}`);
           const data = await response.json();
 
           // update state with fetched notifications

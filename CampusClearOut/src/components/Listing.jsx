@@ -29,6 +29,7 @@ function Listing({ seller, title, description, price, image, status, link }) {
         src={image || placeholderImage}
         alt={title || "Listing Image"}
         className="listing-image"
+        style={{ width: "100%", height: "290px", objectFit: "cover" }} 
       />
 
       {/* main content: seller info, description, price, and button */}

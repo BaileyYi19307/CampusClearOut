@@ -96,7 +96,6 @@ const authRequiredPaths = [
   "/api/deny-request/:requestId",
   "/api/delete-request/:requestId",
   "/api/approved-requests",
-  "/api/notifications",
   "/api/delete-listing/:id",
 ];
 
